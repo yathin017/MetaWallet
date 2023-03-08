@@ -12,6 +12,7 @@
     "bcrypt": "^5.1.0",
     "bigi": "^1.4.2",
     "crypto": "^1.0.1",
+    "crystals-kyber": "^5.1.0",
     "ecurve": "^1.0.6",
     "secrets.js-grempe": "^2.0.0",
     "speakeasy": "^2.0.0"

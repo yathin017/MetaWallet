@@ -75,6 +75,7 @@ pwd1 = "Password1";
 pwd2 = "Password2";
 
 const hashUsername = hash(username);
+console.log(hashUsername)
 const hashPwd1 = hash(pwd1);
 const hashPwd2 = hash(pwd2);
 
@@ -84,6 +85,8 @@ const alpha = ecModExponent(
   hashToEllipticCurvePoint(hexTOdec(hashPwd1))[0],
   Cr
 )[0];
+
+console.log(alpha);
 
 // Server side
 const Sr = "cb1161f9dbae25cc4dc3eb85a722c3a2cc8ead1ce9a6ab711b5a0ca6ae474127"; // random256()
@@ -104,6 +107,6 @@ console.log("NEW SHARE: " + mainshare);
 const secret = secrets.combine(shares);
 console.log("SECRET: " + secret);
 
-const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
-console.log("PUBLIC KEY: " + keyPair[0]);
-console.log("PRIVATE KEY: " + keyPair[1]);
+// const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
+// console.log("PUBLIC KEY: " + keyPair[0]);
+// console.log("PRIVATE KEY: " + keyPair[1]);

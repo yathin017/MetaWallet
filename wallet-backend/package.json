@@ -1,22 +1,31 @@
 {
-  "name": "wallet-backend",
+  "name": "metawallet",
   "version": "1.0.0",
-  "description": "",
+  "description": "Securing Digital Asset Wallets with Post Quantum Cryptography and Zero Knowledge Proof: A Novel Approach",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yathin017/MetaWallet.git#main"
   },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yathin017/MetaWallet/issues"
+  },
+  "homepage": "https://github.com/yathin017/MetaWallet/tree/main#readme",
   "dependencies": {
-    "bigi": "^1.4.2",
-    "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "dotenv": "^16.0.3",
     "ecurve": "^1.0.6",
     "express": "^4.18.2",
-    "express-validator": "^6.14.2",
-    "mongoose": "^6.8.3",
+    "mongoose": "^7.0.1",
     "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "nodemon": "^2.0.21"
   }
 }
