@@ -16,8 +16,7 @@ const userSchema = new mangooose.Schema({
   publicKey: {
     type: String,
   },
-  socialRecoveryHelpers: [{"username": String, "index": Number, "secretNumber": String}], // User's helpers
-  socialRecovery: [{"username": String, "publicKey": String}], // To whom the user is a helper
+  socialRecoveryHelpers: [{"username": String, "secretShare": String}]
 });
 
 module.exports = mangooose.model("User", userSchema);

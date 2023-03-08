@@ -69,7 +69,7 @@ function verifyToken(req, res, next) {
 // Routes
 // Get user
 router.get("/:username", getUser, verifyToken, (req, res) => {
-  res.send(res.user);
+  res.json(res.user);
 });
 
 // Create user
@@ -85,28 +85,46 @@ router.post("/create", async (req, res) => {
     const randomValue = random256();
     const beta = ecModExponent(req.body.alpha, randomValue);
     const authSecret = generateAuthenticatorSecret();
+    const authSecretBase32 = authSecret.base32;
     const user = new User({
       username,
       random: randomValue,
-      authenticatorSecret: authSecret,
+      authenticatorSecret: authSecret.ascii,
     });
     await user.save();
     return res
       .status(201)
-      .json({ beta: { beta }, authenticatorSecret: { authSecret } });
+      .json({ beta: { beta }, authenticatorSecret: { authSecretBase32 } });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 });
 
 // Update user
-router.patch("/:id", (req, res) => {
-  res.send("Hello World");
+router.patch("/:username", getUser, verifyToken, async (req, res) => {
+  const { socialRecoveryHelpers } = req.body;
+  if (socialRecoveryHelpers != null && Array.isArray(socialRecoveryHelpers)) {
+    // Push each object in the socialRecoveryHelpers array to the user's socialRecoveryHelpers array
+    socialRecoveryHelpers.forEach((helper) => {
+      res.user.socialRecoveryHelpers.push(helper);
+    });
+  }
+  try {
+    const updatedUser = await res.user.save();
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 });
 
 // Delete user
-router.delete("/:id", (req, res) => {
-  res.send("Hello World");
+router.delete("/:username", getUser, verifyToken, async (req, res) => {
+  try {
+    await res.user.remove();
+    res.json({ message: "Deleted user" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;
