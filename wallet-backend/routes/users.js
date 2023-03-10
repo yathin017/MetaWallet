@@ -67,10 +67,6 @@ function verifyToken(req, res, next) {
 }
 
 // Routes
-// Get user
-router.get("/:username", getUser, verifyToken, (req, res) => {
-  res.json(res.user);
-});
 
 // Create user
 router.post("/create", async (req, res) => {
@@ -100,10 +96,16 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Update user
+// Get user
+router.get("/:username", getUser, verifyToken, (req, res) => {
+  res.json(res.user);
+});
+
+// Update user for social recovery
 router.patch("/:username", getUser, verifyToken, async (req, res) => {
-  const { socialRecoveryHelpers } = req.body;
-  if (socialRecoveryHelpers != null && Array.isArray(socialRecoveryHelpers)) {
+  const { publicKey, socialRecoveryHelpers } = req.body;
+  if (publicKey != null && socialRecoveryHelpers != null && Array.isArray(socialRecoveryHelpers)) {
+    res.user.publicKey = publicKey;
     // Push each object in the socialRecoveryHelpers array to the user's socialRecoveryHelpers array
     socialRecoveryHelpers.forEach((helper) => {
       res.user.socialRecoveryHelpers.push(helper);
@@ -114,6 +116,27 @@ router.patch("/:username", getUser, verifyToken, async (req, res) => {
     res.json(updatedUser);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+// Rekey user
+router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+  try {
+    const verify = verifyAuthSecret(res.user.authenticatorSecret, token);
+    if (!verify) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    const randomValue = random256();
+    const beta = ecModExponent(req.body.alpha, randomValue);
+    res.user.random = randomValue;
+    const updatedUser = await res.user.save();
+    res.json({ beta: { beta }, user: updatedUser });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
