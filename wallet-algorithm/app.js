@@ -29,7 +29,7 @@ function ecModExponent(sp, exp) {
   const startPoint = BigInteger(String(sp));
   const ecPoint = ecparams.pointFromX(true, startPoint);
   const resultPoint = ecPoint.multiply(exponent);
-  return [String(resultPoint.affineX), String(resultPoint.affineY)];
+  return String(resultPoint.affineX);
 }
 
 function ecInverse(Cr) {
@@ -46,7 +46,7 @@ function hashToEllipticCurvePoint(hv) {
     bufferHashValue = Buffer.from(hash(Buffer.toString()), "hex");
     ecPoint = ecparams.pointFromX(true, BigInteger.fromBuffer(bufferHashValue));
   }
-  return [String(ecPoint.affineX), String(ecPoint.affineY)];
+  return String(ecPoint.affineX);
 }
 
 function secretToUint8Array(secret) {
@@ -75,14 +75,14 @@ const pwd1 = "Password1";
 const pwd2 = "Password2";
 
 const hashUsername = hash(username);
-console.log(hashUsername)
+console.log(hashUsername);
 
 const Cr = random256();
 const CrInv = ecInverse(Cr);
 const alpha = ecModExponent(
-  hashToEllipticCurvePoint(hexTOdec(username.concat(pwd1)))[0],
+  hashToEllipticCurvePoint(hexTOdec(username.concat(pwd1))),
   Cr
-)[0];
+);
 
 console.log(alpha);
 
@@ -91,7 +91,7 @@ const Sr = "cb1161f9dbae25cc4dc3eb85a722c3a2cc8ead1ce9a6ab711b5a0ca6ae474127"; /
 const beta = ecModExponent(alpha, Sr);
 
 // Client side
-const gamma = ecModExponent(beta[0], CrInv)[0];
+const gamma = ecModExponent(beta, CrInv);
 const hashPwd2 = hash(pwd2);
 
 // (n>=2, m>=5) Shamir's Secret Sharing

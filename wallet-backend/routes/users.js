@@ -17,7 +17,7 @@ function ecModExponent(sp, exp) {
   const startPoint = BigInteger(String(sp));
   const ecPoint = ecparams.pointFromX(true, startPoint);
   const resultPoint = ecPoint.multiply(exponent);
-  return [String(resultPoint.affineX), String(resultPoint.affineY)];
+  return String(resultPoint.affineX);
 }
 
 function generateAuthenticatorSecret() {
