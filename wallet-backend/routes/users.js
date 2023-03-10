@@ -119,24 +119,16 @@ router.patch("/:username", getUser, verifyToken, async (req, res) => {
   }
 });
 
-// Rekey user
-router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
-  const { token } = req.body;
-  if (!token) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
+// Rekey beta
+router.patch("/rekey/:username", getUser, verifyToken, async (req, res) => {
+  const randomValue = random256();
+  const beta = ecModExponent(req.body.alpha, randomValue);
+  res.user.random = randomValue;
   try {
-    const verify = verifyAuthSecret(res.user.authenticatorSecret, token);
-    if (!verify) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-    const randomValue = random256();
-    const beta = ecModExponent(req.body.alpha, randomValue);
-    res.user.random = randomValue;
-    const updatedUser = await res.user.save();
-    res.json({ beta: { beta }, user: updatedUser });
+    await res.user.save();
+    res.json({ beta: { beta } });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ message: err.message });
   }
 });
 
