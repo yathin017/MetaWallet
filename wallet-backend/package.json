@@ -19,7 +19,6 @@
   "homepage": "https://github.com/yathin017/MetaWallet/tree/main#readme",
   "dependencies": {
     "crypto": "^1.0.1",
-    "crystals-kyber": "^5.1.0",
     "ecurve": "^1.0.6",
     "express": "^4.18.2",
     "mongoose": "^7.0.1",
