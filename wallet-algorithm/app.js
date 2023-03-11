@@ -25,8 +25,8 @@ function random256() {
 }
 
 function ecModExponent(sp, exp) {
-  const exponent = BigInteger(String(exp));
   const startPoint = BigInteger(String(sp));
+  const exponent = BigInteger(String(exp));
   const ecPoint = ecparams.pointFromX(true, startPoint);
   const resultPoint = ecPoint.multiply(exponent);
   return String(resultPoint.affineX);

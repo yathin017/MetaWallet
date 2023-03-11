@@ -6,6 +6,25 @@ const ecparams = ecurve.getCurveByName("secp256k1"); //ecurve library constructo
 const router = express.Router();
 const speakeasy = require("speakeasy");
 const User = require("../models/user");
+require("dotenv").config();
+
+// Import Redis client library
+const redis = require("redis");
+
+const redisClient = redis.createClient({
+  password: process.env.Redis,
+  host: "redis-16977.c1.asia-northeast1-1.gce.cloud.redislabs.com",
+  port: 16977,
+});
+
+redisClient.on("connect", () => {
+  console.log("Redis connected");
+});
+
+// Log any Redis connection errors
+redisClient.on("error", (error) => {
+  console.error(error);
+});
 
 // Functions
 function random256() {
@@ -66,6 +85,22 @@ function verifyToken(req, res, next) {
   next();
 }
 
+// Middleware for checking if the user is cached in Redis
+const isCached = (req, res, next) => {
+  const { username, token } = req.params;
+  //First check in Redis
+  redisClient.get(username, (err, user) => {
+    if (err) {
+      console.log(err);
+    }
+    if (user) {
+      const reponse = JSON.parse(user);
+      return res.status(200).json(reponse);
+    }
+    next();
+  });
+};
+
 // Routes
 
 // Create user
@@ -88,6 +123,8 @@ router.post("/create", async (req, res) => {
       authenticatorSecret: authSecret.ascii,
     });
     await user.save();
+    // Save to redis for caching
+    redisClient.set(username, JSON.stringify(user));
     return res
       .status(201)
       .json({ beta: { beta }, authenticatorSecret: { authSecretBase32 } });
@@ -97,14 +134,18 @@ router.post("/create", async (req, res) => {
 });
 
 // Get user
-router.get("/:username", getUser, verifyToken, (req, res) => {
+router.get("/:username", isCached, getUser, verifyToken, (req, res) => {
   res.json(res.user);
 });
 
 // Update user for social recovery
 router.patch("/:username", getUser, verifyToken, async (req, res) => {
   const { publicKey, socialRecoveryHelpers } = req.body;
-  if (publicKey != null && socialRecoveryHelpers != null && Array.isArray(socialRecoveryHelpers)) {
+  if (
+    publicKey != null &&
+    socialRecoveryHelpers != null &&
+    Array.isArray(socialRecoveryHelpers)
+  ) {
     res.user.publicKey = publicKey;
     // Push each object in the socialRecoveryHelpers array to the user's socialRecoveryHelpers array
     socialRecoveryHelpers.forEach((helper) => {
@@ -113,6 +154,8 @@ router.patch("/:username", getUser, verifyToken, async (req, res) => {
   }
   try {
     const updatedUser = await res.user.save();
+    // Save to redis for caching
+    redisClient.set(username, JSON.stringify(updatedUser));
     res.json(updatedUser);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -125,7 +168,9 @@ router.patch("/rekey/:username", getUser, verifyToken, async (req, res) => {
   const beta = ecModExponent(req.body.alpha, randomValue);
   res.user.random = randomValue;
   try {
-    await res.user.save();
+    const updatedUser = await res.user.save();
+    // Save to redis for caching
+    redisClient.set(username, JSON.stringify(updatedUser));
     res.json({ beta: { beta } });
   } catch (err) {
     res.status(400).json({ message: err.message });
