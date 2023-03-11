@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 
-mongoose.connect(process.env.mongoDB, {
+mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
