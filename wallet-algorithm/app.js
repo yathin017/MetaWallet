@@ -5,6 +5,7 @@ const ecurve = require("ecurve");
 const ecparams = ecurve.getCurveByName("secp256k1"); //ecurve library constructor
 const secrets = require("secrets.js-grempe");
 const kyber = require("crystals-kyber");
+const ethers = require('ethers');
 
 // Functions
 function hash(message) {
@@ -75,7 +76,7 @@ const pwd1 = "Password1";
 const pwd2 = "Password2";
 
 const hashUsername = hash(username);
-console.log(hashUsername);
+console.log("USERNAME: ",hashUsername);
 
 const Cr = random256();
 const CrInv = ecInverse(Cr);
@@ -84,7 +85,7 @@ const alpha = ecModExponent(
   Cr
 );
 
-console.log(alpha);
+console.log("ALPHA: ",alpha);
 
 // Server side
 const Sr = "cb1161f9dbae25cc4dc3eb85a722c3a2cc8ead1ce9a6ab711b5a0ca6ae474127"; // random256()
@@ -106,6 +107,9 @@ console.log("NEW SHARE: " + mainshare);
 const secret = secrets.combine(shares);
 console.log("SECRET: " + secret);
 
-// const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
+const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
 // console.log("PUBLIC KEY: " + keyPair[0]);
 // console.log("PRIVATE KEY: " + keyPair[1]);
+
+const wallet = new ethers.Wallet(hash(keyPair[1]));
+console.log("ADDRESS: ",wallet.address);
