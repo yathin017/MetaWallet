@@ -5,6 +5,10 @@ const ecurve = require("ecurve");
 const ecparams = ecurve.getCurveByName("secp256k1"); //ecurve library constructor
 const router = express.Router();
 const speakeasy = require("speakeasy");
+// import * as PushAPI from "@pushprotocol/restapi";
+// import PushAPI from "@pushprotocol/restapi";
+const PushAPI = require("@pushprotocol/restapi");
+const ethers = require("ethers");
 const User = require("../models/user");
 require("dotenv").config();
 
@@ -87,7 +91,7 @@ function verifyToken(req, res, next) {
 
 // Middleware for checking if the user is cached in Redis
 const isCached = (req, res, next) => {
-  const { username, token } = req.params;
+  const { username } = req.params;
   //First check in Redis
   redisClient.get(username, (err, user) => {
     if (err) {
@@ -100,6 +104,43 @@ const isCached = (req, res, next) => {
     next();
   });
 };
+
+// PUSH API
+const PK = process.env.CHANNEL_PRIVATE_KEY; // channel private key
+const Pkey = `0x${PK}`;
+const _signer = new ethers.Wallet(Pkey);
+
+const sendNotification = async (nBody, pTitle, pBody, receiver) => {
+  try {
+    const apiResponse = await PushAPI.payloads.sendNotification({
+      signer: _signer,
+      type: 3, // broadcast
+      identityType: 2, // direct payload
+      notification: {
+        title: "MetaWallet",
+        body: nBody,
+      },
+      payload: {
+        title: pTitle,
+        body: pBody,
+        cta: "",
+        img: "",
+      },
+      recipients: `eip155:5:${receiver}`,
+      channel: "eip155:5:0xE6707721ad79f4519f80D95ef4D961b60893CD76", // your channel address
+      env: "staging",
+    });
+  } catch (err) {
+    console.error("Error: ", err);
+  }
+};
+
+function currentDate(){
+  const date = new Date();
+  return date;
+}
+// const date = new Date(year,month,day,hours,minutes,seconds,ms);
+
 
 // Routes
 
@@ -140,23 +181,33 @@ router.get("/:username", isCached, getUser, verifyToken, (req, res) => {
 
 // Update user for social recovery
 router.patch("/:username", getUser, verifyToken, async (req, res) => {
-  const { publicKey, socialRecoveryHelpers } = req.body;
+  const { username, publicAddress, socialRecoveryHelpers } = req.body;
   if (
-    publicKey != null &&
+    publicAddress != null &&
     socialRecoveryHelpers != null &&
     Array.isArray(socialRecoveryHelpers)
   ) {
-    res.user.publicKey = publicKey;
-    // Push each object in the socialRecoveryHelpers array to the user's socialRecoveryHelpers array
-    socialRecoveryHelpers.forEach((helper) => {
-      res.user.socialRecoveryHelpers.push(helper);
-    });
+    res.user.publicAddress = publicAddress;
+    // Empty the socialRecoveryHelpers array
+    res.user.socialRecoveryHelpers = socialRecoveryHelpers;
+    // // Push each object in the socialRecoveryHelpers array to the user's socialRecoveryHelpers array
+    // socialRecoveryHelpers.forEach((helper) => {
+    //   res.user.socialRecoveryHelpers.push(helper);
+    // });
   }
   try {
+    if (res.user.publicAddress == null) {
+      const updatedUser = await res.user.save();
+      // Save to redis for caching
+      redisClient.set(username, JSON.stringify(updatedUser));
+      res.json(updatedUser);
+      sendNotification("New MetaWallet Created", "MetaWallet Created", `Your MetaWallet has been created on ${currentDate()}. Your username is ${res.user.username} and publicAddress is ${res.user.publicAddress}. Please dont forget your MetaWallet passwords, incase you do you can recover your MetaWallet using your social recovery helpers.`, res.user.publicAddress);
+    }
     const updatedUser = await res.user.save();
     // Save to redis for caching
     redisClient.set(username, JSON.stringify(updatedUser));
     res.json(updatedUser);
+    sendNotification("Your MetaWallet Changed", "MetaWallet Changed", `Your MetaWallet has been rekeyed on ${currentDate()}. Your username is ${res.user.username} and publicAddress is ${res.user.publicAddress}. Please dont forget your MetaWallet passwords, incase you do you can recover your MetaWallet using your social recovery helpers.`, res.user.publicAddress);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -172,6 +223,7 @@ router.patch("/rekey/:username", getUser, verifyToken, async (req, res) => {
     // Save to redis for caching
     redisClient.set(username, JSON.stringify(updatedUser));
     res.json({ beta: { beta } });
+    sendNotification("Your MetaWallet Rekeyed", "MetaWallet Rekeyed", `Your MetaWallet has been rekeyed on ${currentDate()}. Your username is ${res.user.username} and new publicAddress is ${res.user.publicAddress}. Please dont forget your MetaWallet passwords, incase you do you can recover your MetaWallet using your social recovery helpers.`, res.user.publicAddress);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -182,6 +234,7 @@ router.delete("/:username", getUser, verifyToken, async (req, res) => {
   try {
     await res.user.remove();
     res.json({ message: "Deleted user" });
+    sendNotification("Your MetaWallet Deleted", "MetaWallet Deleted", `Your MetaWallet has been deleted from our database on ${currentDate()}. Please dont forget your MetaWallet passwords, we cant recover your MetaWallet for you.`);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

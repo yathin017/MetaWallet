@@ -1,6 +1,6 @@
-const mangooose = require("mongoose");
+const mongoose = require("mongoose");
 
-const userSchema = new mangooose.Schema({
+const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -13,10 +13,10 @@ const userSchema = new mangooose.Schema({
     type: String,
     required: true,
   },
-  publicKey: {
+  publicAddress: {
     type: String,
   },
   socialRecoveryHelpers: [{"username": String, "secretShare": String}]
 });
 
-module.exports = mangooose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);
