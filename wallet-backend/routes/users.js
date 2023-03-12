@@ -5,8 +5,6 @@ const ecurve = require("ecurve");
 const ecparams = ecurve.getCurveByName("secp256k1"); //ecurve library constructor
 const router = express.Router();
 const speakeasy = require("speakeasy");
-// import * as PushAPI from "@pushprotocol/restapi";
-// import PushAPI from "@pushprotocol/restapi";
 const PushAPI = require("@pushprotocol/restapi");
 const ethers = require("ethers");
 const User = require("../models/user");
@@ -139,7 +137,6 @@ function currentDate(){
   const date = new Date();
   return date;
 }
-// const date = new Date(year,month,day,hours,minutes,seconds,ms);
 
 
 // Routes
