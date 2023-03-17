@@ -185,12 +185,7 @@ router.patch("/:username", getUser, verifyToken, async (req, res) => {
     Array.isArray(socialRecoveryHelpers)
   ) {
     res.user.publicAddress = publicAddress;
-    // Empty the socialRecoveryHelpers array
     res.user.socialRecoveryHelpers = socialRecoveryHelpers;
-    // // Push each object in the socialRecoveryHelpers array to the user's socialRecoveryHelpers array
-    // socialRecoveryHelpers.forEach((helper) => {
-    //   res.user.socialRecoveryHelpers.push(helper);
-    // });
   }
   try {
     if (res.user.publicAddress == null) {
