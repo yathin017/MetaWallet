@@ -15,6 +15,7 @@
     "crystals-kyber": "^5.1.0",
     "ecurve": "^1.0.6",
     "ethers": "^6.1.0",
+    "https": "^1.0.0",
     "secrets.js-grempe": "^2.0.0",
     "speakeasy": "^2.0.0"
   }

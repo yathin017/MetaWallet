@@ -25,7 +25,7 @@ function random256() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-function ecModExponent(sp, exp) {
+function ecPointExponentiation(sp, exp) {
   const startPoint = BigInteger(String(sp));
   const exponent = BigInteger(String(exp));
   const ecPoint = ecparams.pointFromX(true, startPoint);
@@ -80,7 +80,7 @@ console.log("USERNAME: ",hashUsername);
 
 const Cr = random256();
 const CrInv = ecInverse(Cr);
-const alpha = ecModExponent(
+const alpha = ecPointExponentiation(
   hashToEllipticCurvePoint(hexTOdec(username.concat(pwd1))),
   Cr
 );
@@ -88,11 +88,11 @@ const alpha = ecModExponent(
 console.log("ALPHA: ",alpha);
 
 // Server side
-const Sr = "cb1161f9dbae25cc4dc3eb85a722c3a2cc8ead1ce9a6ab711b5a0ca6ae474127"; // random256()
-const beta = ecModExponent(alpha, Sr);
+const Sr = "fb c2 d4 7d 1e 80 03 c9 84 82 0b 81 f5 16 5a f3 e0 1c 23 1a af 02 76 49 0c cb 63 17 32 1f 6b b6"; // random256()
+const beta = ecPointExponentiation(alpha, Sr);
 
 // Client side
-const gamma = secretToUint8Array(ecModExponent(beta, CrInv));
+const gamma = secretToUint8Array(ecPointExponentiation(beta, CrInv));
 const hashPwd2 = hash(pwd2);
 
 const keyPair = kyberKeyGeneration(gamma);
