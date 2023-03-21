@@ -33,7 +33,7 @@ function random256() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-function ecModExponent(sp, exp) {
+function ecPointExponentiation(sp, exp) {
   const exponent = BigInteger(String(exp));
   const startPoint = BigInteger(String(sp));
   const ecPoint = ecparams.pointFromX(true, startPoint);
@@ -152,7 +152,7 @@ router.post("/create", async (req, res) => {
     }
     // If no existing record with the same username is found, create a new record
     const randomValue = random256();
-    const beta = ecModExponent(req.body.alpha, randomValue);
+    const beta = ecPointExponentiation(req.body.alpha, randomValue);
     const authSecret = generateAuthenticatorSecret();
     const authSecretBase32 = authSecret.base32;
     const user = new User({
@@ -208,7 +208,7 @@ router.patch("/:username", getUser, verifyToken, async (req, res) => {
 // Rekey beta
 router.patch("/rekey/:username", getUser, verifyToken, async (req, res) => {
   const randomValue = random256();
-  const beta = ecModExponent(req.body.alpha, randomValue);
+  const beta = ecPointExponentiation(req.body.alpha, randomValue);
   res.user.random = randomValue;
   try {
     const updatedUser = await res.user.save();
