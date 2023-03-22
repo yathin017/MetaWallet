@@ -39,7 +39,7 @@ async function fetchRandomBytes() {
   });
 }
 
-async function random256() {
+async function random32() {
   const response = await fetchRandomBytes();
   return response;
 }
@@ -97,7 +97,7 @@ const pwd2 = "Password2";
 const hashUsername = hash(username);
 console.log("USERNAME: ",hashUsername);
 
-const Cr = random256();
+const Cr = random32();
 const CrInv = ecInverse(Cr);
 const alpha = ecPointExponentiation(
   hashToEllipticCurvePoint(hexTOdec(username.concat(pwd1))),
@@ -107,7 +107,7 @@ const alpha = ecPointExponentiation(
 console.log("ALPHA: ",alpha);
 
 // Server side
-const Sr = "fb c2 d4 7d 1e 80 03 c9 84 82 0b 81 f5 16 5a f3 e0 1c 23 1a af 02 76 49 0c cb 63 17 32 1f 6b b6"; // random256()
+const Sr = "fb c2 d4 7d 1e 80 03 c9 84 82 0b 81 f5 16 5a f3 e0 1c 23 1a af 02 76 49 0c cb 63 17 32 1f 6b b6"; // random32()
 const beta = ecPointExponentiation(alpha, Sr);
 
 // Client side

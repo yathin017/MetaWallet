@@ -45,7 +45,7 @@ async function fetchRandomBytes() {
   });
 }
 
-async function random256() {
+async function random32() {
   const response = await fetchRandomBytes();
   return response;
 }
@@ -168,7 +168,7 @@ router.post("/create", async (req, res) => {
       return res.status(409).json({ message: "Username already exists" });
     }
     // If no existing record with the same username is found, create a new record
-    const randomValue = random256();
+    const randomValue = random32();
     const beta = ecPointExponentiation(req.body.alpha, randomValue);
     const authSecret = generateAuthenticatorSecret();
     const authSecretBase32 = authSecret.base32;
@@ -224,7 +224,7 @@ router.patch("/:username", getUser, verifyToken, async (req, res) => {
 
 // Rekey beta
 router.patch("/rekey/:username", getUser, verifyToken, async (req, res) => {
-  const randomValue = random256();
+  const randomValue = random32();
   const beta = ecPointExponentiation(req.body.alpha, randomValue);
   res.user.random = randomValue;
   try {
