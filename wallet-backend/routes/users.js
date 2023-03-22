@@ -1,5 +1,5 @@
 const express = require("express");
-const crypto = require("crypto");
+const https = require('https');
 const BigInteger = require("bigi");
 const ecurve = require("ecurve");
 const ecparams = ecurve.getCurveByName("secp256k1"); //ecurve library constructor
@@ -29,8 +29,25 @@ redisClient.on("error", (error) => {
 });
 
 // Functions
-function random256() {
-  return crypto.randomBytes(32).toString("hex");
+async function fetchRandomBytes() {
+  return new Promise((resolve, reject) => {
+    https.get('https://www.random.org/cgi-bin/randbyte?nbytes=32&format=h', (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        resolve(data.trim());
+      });
+    }).on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
+async function random256() {
+  const response = await fetchRandomBytes();
+  return response;
 }
 
 function ecPointExponentiation(sp, exp) {

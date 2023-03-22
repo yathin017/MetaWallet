@@ -1,6 +1,6 @@
 const https = require('https');
 
-function fetchRandomBytes() {
+async function fetchRandomBytes() {
   return new Promise((resolve, reject) => {
     https.get('https://www.random.org/cgi-bin/randbyte?nbytes=32&format=h', (res) => {
       let data = '';
@@ -17,10 +17,9 @@ function fetchRandomBytes() {
 }
 
 // Usage example:
-fetchRandomBytes()
-  .then((bytes) => {
-    console.log('Random bytes:', bytes);
-  })
-  .catch((err) => {
-    console.error('Error fetching random bytes:', err);
-  });
+async function getRandomBytes() {
+  const response = await fetchRandomBytes();
+  console.log(response);
+}
+
+getRandomBytes();
