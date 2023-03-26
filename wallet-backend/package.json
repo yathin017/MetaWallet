@@ -20,6 +20,7 @@
   "dependencies": {
     "@polybase/client": "^0.3.32",
     "@pushprotocol/restapi": "^0.7.5",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "ecurve": "^1.0.6",
     "ethers": "^5.7.2",

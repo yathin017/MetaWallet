@@ -6,14 +6,11 @@ export const BottomFooter = () => {
         <Footer container={true} className='footer '>
             <div className="w-full">
                 <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">
-                    <div>
-                        <Footer.Brand
-                            href="https://MetaWallet.com"
-                            src="https://flowbite.com/docs/images/logo.svg"
+                    <a href='/'>
+                        <img src="./MetaWallet1.png"
                             alt="MetaWallet Logo"
-                            name="MetaWallet"
-                        />
-                    </div>
+                            className="w-[140px] h-[130px] cursor-pointer" />
+                    </a>
                     <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
                         <div>
                             <Footer.Title title="about" />

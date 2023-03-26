@@ -4,7 +4,7 @@ import { useReducer } from "./users/reducer";
 export const ConfigureStore = () => {
   const store = createStore(
     combineReducers({
-      useReducer: useReducer,
+      users: useReducer,
     })
   );
   return store;

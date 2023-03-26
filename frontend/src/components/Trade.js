@@ -9,7 +9,7 @@ const Trade = () => {
                         Transact
                     </div>
                     <div className='mt-3'>
-                        <input className='ant-input' placeholder='0'  type="number" />
+                        <input className='ant-input' placeholder='0' />
                     </div>
                     <div className='mt-3 swapButton'>
                         Complete Swap

@@ -1,14 +1,6 @@
 import {
-    SIGN_IN,
-    SIGN_IN_ERROR,
-    SIGN_IN_SUCCESS,
-    REFRESH_TOKEN,
-    REFRESH_TOKEN_SUCCESS,
-    REFRESH_TOKEN_ERROR,
-    LOGOUT,
-    LOGOUT_SUCCESS,
-    LOGOUT_ERROR,
-    HANDLE_TOKENS,
+    SIGN_IN, SIGN_IN_SUCCESS,
+    TOKEN_SUCCESS,SOCIAL_RECOVERY_SUCCESS
   } from "./types";
   
   const initialState = {
@@ -24,59 +16,34 @@ import {
     isTokenLoading: false,
     error: null,
     message: null,
+    qrLoading: 0,
+    userAuthenticatonSecret: null,
+    gamma:null,
+    hashpassword:null,
+    
   };
   
   const useReducer = (state = initialState, action) => {
     switch (action.type) {
       case SIGN_IN:
-      case LOGOUT: {
-        return {
+        return{
           ...state,
           loading: true,
-        };
-      }
-      case REFRESH_TOKEN: {
-        return {
-          ...state,
-          isTokenLoading: true,
-        };
-      }
-      case SIGN_IN_SUCCESS: {
+          qrLoading: 1,
+        }
+      case SIGN_IN_SUCCESS:
         return {
           ...state,
           loading: false,
-          message: action.message,
-          contact: action.contact,
+          gamma: action.payload.gamma,
+          hashpassword: action.payload.hashpassword,
+          userAuthenticatonSecret: action.payload.authSecretBase32,
         };
-      }
-      case LOGOUT_SUCCESS: {
+      case SOCIAL_RECOVERY_SUCCESS:
         return {
           ...state,
-          loading: false,
-          message: action.payload,
+          qrLoading: 2,
         };
-      }
-      case REFRESH_TOKEN_SUCCESS:
-      case REFRESH_TOKEN_ERROR: {
-        return {
-          ...state,
-          isTokenLoading: false,
-        };
-      }
-      case LOGOUT_ERROR:
-      case SIGN_IN_ERROR: {
-        return {
-          ...state,
-          loading: false,
-          error: action.payload,
-        };
-      }
-      case HANDLE_TOKENS: {
-        return {
-          ...state,
-          accessToken: action.accessToken,
-        };
-      }
       default:
         return state;
     }

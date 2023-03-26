@@ -160,6 +160,7 @@ function currentDate(){
 
 // Create user
 router.post("/create", async (req, res) => {
+  console.log("End-Point Hit for Creation of User")
   const username = req.body.username;
   try {
     // Check if a record with the same username already exists
@@ -168,7 +169,7 @@ router.post("/create", async (req, res) => {
       return res.status(409).json({ message: "Username already exists" });
     }
     // If no existing record with the same username is found, create a new record
-    const randomValue = random32();
+    const randomValue = await random32();
     const beta = ecPointExponentiation(req.body.alpha, randomValue);
     const authSecret = generateAuthenticatorSecret();
     const authSecretBase32 = authSecret.base32;
@@ -181,7 +182,7 @@ router.post("/create", async (req, res) => {
     // Save to redis for caching
     redisClient.set(username, JSON.stringify(user));
     return res
-      .status(201)
+      .status(200)
       .json({ beta: { beta }, authenticatorSecret: { authSecretBase32 } });
   } catch (err) {
     return res.status(500).json({ message: err.message });

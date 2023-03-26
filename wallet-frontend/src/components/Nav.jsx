@@ -42,15 +42,16 @@ export const Nav = () => {
                     rounded={true}
                     className="bg-transparent pt-4 nav"
                 >
-                    <Navbar.Brand href="https://flowbite.com/">
-                        <img
+                    <Navbar.Brand href="/">
+                        {/* <img
                             src="https://flowbite.com/docs/images/logo.svg"
                             className="mr-3 h-6 sm:h-9"
                             alt="Flowbite Logo"
                         />
                         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
                             Meta Wallet
-                        </span>
+                        </span> */}
+                        <img src="./MetaWallet.png" className="h-10" alt="MetaWallet" />
                     </Navbar.Brand>
                     <div className="flex md:order-2">
                         <Button className='bg-[#286cfb] mr-2' size='sm' pill={true} onClick={() => { setShow(true) }}>
