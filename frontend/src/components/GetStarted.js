@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Tabs } from 'flowbite-react'
 import { AiOutlineLogin } from 'react-icons/ai'
 import { MdAccountCircle } from 'react-icons/md'
@@ -9,25 +9,35 @@ import { QRCode } from 'react-qrcode-logo';
 import logo from './MetaWallet1.png'
 import Select from 'react-select'
 
-const GetStarted = () => {
+const GetStarted = ({ onClose }) => {
     const [userdata, setuserdata] = React.useState({
         email: '',
         password1: '',
+        password2: '',
         otp: ''
     })
-    const { handleLogin, handleCreateAccount, handleSocialRecovery,handleIntialization } = useAPI();
-    console.log(userdata)
-    const { qrLoading, userAuthenticatonSecret,gamma,hashpassword } = useSelector(state => state.users)
-    console.log(qrLoading)
-    const [selectedOption, setSelectedOption] = useState(null)
+    const [matchingPasswords,setMatchingPasswords] = useState(false)
+    const { handleLogin, handleCreateAccount, handleSocialRecovery, handleIntialization } = useAPI();
+    const { qrLoading, userAuthenticatonSecret, gamma, userData } = useSelector(state => state.users)
+    const [selectedOption, setSelectedOption] = useState(0)
     const [showEmail, setShowEmail] = useState(false)
     const [emails, setEmails] = useState({
-        value: 2,
+        value: 0,
         email1: '',
         email2: '',
         email3: '',
         email4: '',
     })
+    console.log(userdata)
+    useEffect(() => {
+        if(userdata.password1 === userdata.password2 && userdata.password1 !== '' && userdata.password2 !== ''){
+            setMatchingPasswords(true)
+        }
+        else{
+            setMatchingPasswords(false)
+        }
+    }, [userdata])
+
 
     return (
         <div>
@@ -39,7 +49,8 @@ const GetStarted = () => {
                     setuserdata({
                         email: '',
                         password1: '',
-                        token: ''
+                        password2: '',
+                        otp: ''
                     })
                 }}
             >
@@ -137,7 +148,7 @@ const GetStarted = () => {
                             <div className="mb-3">
                                 <button
                                     onClick={() => {
-                                        handleLogin(userdata.email, userdata.password1, userdata.password2)
+                                        handleLogin(userdata.email, userdata.password1, userdata.otp)
                                     }}
                                     className="w-full px-4 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo"
                                 >
@@ -210,7 +221,7 @@ const GetStarted = () => {
                             />
                             <button
                                 onClick={() => {
-                                    handleIntialization(userdata.otp)
+                                    handleIntialization(userdata.otp, userData.hashemail, userData.publicKey, userData.walletAddress)
                                 }}
                                 className="w-full px-4 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo"
                             >
@@ -224,6 +235,7 @@ const GetStarted = () => {
                                 Start your journey with us today!
                             </h5>
                             <div>
+                                {/* <div>Passwords do not match!</div> */}
                                 <div className="mb-3">
                                     <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
                                         Email Address
@@ -260,23 +272,29 @@ const GetStarted = () => {
                                         className="block w-full px-4 py-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline-gray"
                                     />
                                 </div>
-                                <div className="mb-0 invisible">
+                                <div className="mb-3">
                                     <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                                        Password 2
+                                        Confirm Password
                                     </label>
                                     <input
                                         type="password"
                                         name="password2"
                                         id="password2"
                                         placeholder=""
-                                        className="block w-full px-4 py-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline-gray"
+                                        onChange={(e) => {
+                                            setuserdata({
+                                                ...userdata,
+                                                password2: e.target.value
+                                            })
+                                        }}
+                                        className="block w-full px-4 py-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline-gray "
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label className="inline-flex items-center text-sm font-medium text-gray-600 dark:text-gray-200">
                                         <input
                                             type="checkbox"
-                                            className="text-indigo-600 form-checkbox focus:border-indigo-400 focus:outline-none focus:shadow-outline-indigo dark:focus:shadow-outline-gray"
+                                            className="text-indigo-600 form-checkbox focus:border-indigo-400 focus:outline-none focus:shadow-outline-indigo"
                                         />
                                         <span className="ml-2">Remember me</span>
                                     </label>
@@ -284,7 +302,13 @@ const GetStarted = () => {
                                 <div className="mb-3">
                                     <button
                                         onClick={() => {
+                                            if(matchingPasswords){
+                                                console.log('Passwords Matched')
                                             handleCreateAccount(userdata.email, userdata.password1)
+                                            }
+                                            else{
+                                                window.alert("Passwords do not match!")
+                                            }
                                         }}
                                         className="w-full px-4 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo"
                                     >
@@ -308,21 +332,28 @@ const GetStarted = () => {
                                 </label>
                                 <div>
                                     <Button.Group>
-                                        <Button color="gray" onClick={() => {
+                                        <Button color={selectedOption === 0 ? 'info' : 'gray'} onClick={() => {
+                                            setSelectedOption(0); setShowEmail(true); setEmails({
+                                                ...emails, value: 0
+                                            })
+                                        }}>
+                                            Zero
+                                        </Button>
+                                        <Button color={selectedOption === 2 ? 'info' : 'gray'} onClick={() => {
                                             setSelectedOption(2); setShowEmail(true); setEmails({
                                                 ...emails, value: 2
                                             })
                                         }}>
                                             Two
                                         </Button>
-                                        <Button color="gray" onClick={() => {
+                                        <Button color={selectedOption === 3 ? 'info' : 'gray'} onClick={() => {
                                             setSelectedOption(3); setShowEmail(true); setEmails({
                                                 ...emails, value: 3
                                             })
                                         }}>
                                             Three
                                         </Button>
-                                        <Button color="gray" onClick={() => {
+                                        <Button color={selectedOption === 4 ? 'info' : 'gray'} onClick={() => {
                                             setSelectedOption(4); setShowEmail(true); setEmails({
                                                 ...emails, value: 4
                                             })
@@ -412,16 +443,32 @@ const GetStarted = () => {
                                         </div>
                                         }
                                     </div>
-                                    <div className="mb-3 float-right">
-
-                                        <div className=" text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo w-[80px] text-center py-2 px-4 cursor-pointer" onClick={() => { handleSocialRecovery(gamma,hashpassword,emails) }}>
-                                            Next
-                                        </div>
-                                    </div>
                                 </>
                             }
+                            <div className="mb-3 float-right">
+                                <div className=" text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo w-[80px] text-center py-2 px-4 cursor-pointer" onClick={() => { handleSocialRecovery(userData.hashemail, userData.alpha, userData.CrInv, userData.hashpassword, emails) }}>
+                                    Next
+                                </div>
+                            </div>
                         </>
                     }
+                    {
+                        (qrLoading === 3) && <>
+                            <div className="mb-3 text-center flex flex-col justify-center items-center space-y-2">
+                                <div className='text-3xl'>
+                                    Welcome to Meta Wallet!
+                                </div>
+                                <div className='text-md'>
+                                    Meta Wallet : Your Smart Private Wallet
+                                </div>
+                            </div>
+                            <div className=" text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo text-center py-2 px-4 cursor-pointer mt-3" onClick={onClose}>
+                                Start Now!
+                            </div>
+                        </>
+                    }
+
+
                 </Tabs.Item>
             </Tabs.Group>
         </div>

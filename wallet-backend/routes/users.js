@@ -147,6 +147,7 @@ async function getUser(req, res, next) {
 
 // Middleware for verifying the authenticity of the token
 function verifyToken(req, res, next) {
+  console.log("verifyToken called")
   const token = req.body.token;
   if (!token) {
     return res.status(400).json({ message: "Missing parameters" });
@@ -195,7 +196,7 @@ router.post("/create", async (req, res) => {
     redisClient.set(username, JSON.stringify(user));
     return res
       .status(200)
-      .json({ beta: { beta }, authenticatorSecret: { authSecretBase32 } });
+      .json({ beta: { beta }, authenticatorSecret: { authSecretBase32 }, helperKeys: { helperKeys } });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -247,6 +248,16 @@ router.post("/init", async (req, res) => {
   }
 });
  
+// Login Route
+router.post("/login/:username", getUser, verifyToken, async (req, res) => {
+  const { alpha } = req.body;
+  if (!alpha) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+  const beta = ecPointExponentiation(alpha, res.user.random);
+  res.json({ beta: { beta },message: "Login successful" });
+});
+
 // Get user
 router.get("/:username", isCached, getUser, (req, res) => {
   res.json(res.user.publicAddress);

@@ -1,3 +1,4 @@
+import React from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BottomFooter } from "./components/BottomFooter";
@@ -10,16 +11,20 @@ const store = ConfigureStore();
 
 
 function App() {
+  const [show, setShow] = React.useState(false)
+  const onClose = () => {
+    // console.log('close')
+    setShow(false)
+  }
   return (
     <Provider store={store}>
       <Routes>
         <Route path="/" element={<div className="z-0">
-          <Nav />
-         
+          <Nav setShow={setShow} show={show} onClose={onClose} />
         </div>} />
         <Route path="/dashboard" element={<div className="z-0">
           <Nav />
-          <Trade />
+          <Trade setShow={setShow} />
           <BottomFooter />
         </div>} />
       </Routes>

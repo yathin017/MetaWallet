@@ -1,17 +1,18 @@
 import { Avatar, Button, Card, Dropdown, Modal, Navbar } from 'flowbite-react'
 import React from 'react'
+import { Link } from 'react-router-dom'
 import GetStarted from './GetStarted'
 import { Login } from './Login'
 import { Signup } from './Signup'
 
-export const Nav = () => {
-    const [show, setShow] = React.useState(false)
-    const [showsignup, setShowsignup] = React.useState(false)
-    const onClose = () => {
-        // console.log('close')
-        setShow(false)
-        setShowsignup(false)
-    }
+export const Nav = ({show,onClose,setShow}) => {
+    
+    // const [showsignup, setShowsignup] = React.useState(false)
+    // const onClose = () => {
+    //     // console.log('close')
+    //     setShow(false)
+    //     // setShowsignup(false)
+    // }
 
     return (
         <>
@@ -23,10 +24,10 @@ export const Nav = () => {
             >
                 <Modal.Header />
                 <Modal.Body>
-                    <GetStarted />
+                    <GetStarted onClose={onClose} />
                 </Modal.Body>
             </Modal>
-            <Modal
+            {/* <Modal
                 show={showsignup}
                 onClose={onClose}
                 size="md"
@@ -36,7 +37,7 @@ export const Nav = () => {
                 <Modal.Body>
                     <Signup />
                 </Modal.Body>
-            </Modal>
+            </Modal> */}
             <div className='bg-[#192134]'>
 
                 <nav class=" border-gray-200 px-2 sm:px-4 py-2.5 rounded bg-[#192134]">
@@ -82,13 +83,13 @@ export const Nav = () => {
                         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="mobile-menu-2">
                             <ul class="flex flex-col p-4 mt-4 border  rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 bg-[#192134] border-gray-700">
                                 <li>
-                                    <a href="#" class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 text-white" aria-current="page">Home</a>
+                                    <Link to='/' class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 text-white" aria-current="page">Home</Link>
                                 </li>
                                 <li>
-                                    <a href="#" class="block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700">Explore</a>
+                                    <Link to='/' class="block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700">Explore</Link>
                                 </li>
                                 <li>
-                                    <a href="#" class="block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700">Transact</a>
+                                    <Link to='/dashboard' class="block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700">Transact</Link>
                                 </li>
                             </ul>
                         </div>

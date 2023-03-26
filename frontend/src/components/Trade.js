@@ -1,6 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router';
 
-const Trade = () => {
+const Trade = ({setShow}) => {
+    const navigate = useNavigate();
+    const { userData } = useSelector(state => state.users);
+    console.log(userData);
+    useEffect(() => {
+        if (userData.privateKey === null) {
+            navigate('/')
+            setShow(true)
+        }
+    }, [userData])
+
     return (
         <div className='main-body'>
             <div className='flex flex-col justify-center items-center py-6 h-[80vh]'>
