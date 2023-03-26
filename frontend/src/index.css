@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
+
+.main-body {
+  background: rgb(25, 33, 52);
+  background: linear-gradient(180deg, rgba(25, 33, 52, 1) 0%, rgba(12, 15, 29, 1) 50%, rgba(7, 8, 21, 1) 100%);
+  color: #fff;
+}
+
+.ant-input {
+  background-color: #1f2639 !important;
+  color: white !important;
+  border-width: 0px !important;
+  height: 96px !important;
+  margin-bottom: 5px;
+  font-size: 35px;
+  border-radius: 12px !important;
+  width: 95%;
+  padding: 6px 11px;
+  text-align: end;
+}
+
+.swapButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #243056;
+  width: calc(95%);
+  height: 55px;
+  font-size: 20px;
+  border-radius: 12px;
+  color: #5981F3;
+  font-weight: bold;
+  transition: 0.3s;
+  margin-bottom: 30px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.cardlogin {
+  border: none;
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.footer {
+  background-color: transparent !important;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  z-index: -1;
+  color: #1f1e1e !important;
+
+  /* background: rgb(241,203,168); */
+  /* background: linear-gradient(153deg, rgba(241,203,168,1) 0%, rgba(234,233,236,1) 35%, rgba(40,108,251,0.6699054621848739) 100%); */
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #d3d3d4;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #c2c1c2;
+}

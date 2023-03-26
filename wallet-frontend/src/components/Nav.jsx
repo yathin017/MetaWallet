@@ -93,21 +93,15 @@ export const Nav = () => {
                     </div>
                     <Navbar.Collapse>
                         <Navbar.Link
-                            href="/navbars"
+                            href=""
                             active={true}
                         >
                             Home
                         </Navbar.Link>
-                        <Navbar.Link href="/navbars">
+                        <Navbar.Link href="">
                             Explore
                         </Navbar.Link>
-                        <Navbar.Link href="/navbars">
-                            Services
-                        </Navbar.Link>
-                        <Navbar.Link href="/navbars">
-                            Pricing
-                        </Navbar.Link>
-                        <Navbar.Link href="/navbars">
+                        <Navbar.Link href="">
                             Contact
                         </Navbar.Link>
                     </Navbar.Collapse>
