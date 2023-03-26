@@ -31,6 +31,7 @@
     "speakeasy": "^2.0.0"
   },
   "devDependencies": {
+    "@types/redis": "^4.0.11",
     "dotenv": "^16.0.3",
     "nodemon": "^2.0.21"
   }

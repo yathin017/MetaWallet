@@ -73,7 +73,6 @@ function kyberKeyGeneration(secretUint8Array) {
 // Client side
 const username = "yathin017";
 const pwd1 = "Password1";
-const pwd2 = "Password2";
 
 const hashUsername = hash(username);
 console.log("USERNAME: ",hashUsername);
@@ -93,11 +92,11 @@ const beta = ecModExponent(alpha, Sr);
 
 // Client side
 const gamma = ecModExponent(beta, CrInv);
-const hashPwd2 = hash(pwd2);
+const hashPwd1 = hash(pwd1);
 
 // (n>=2, m>=5) Shamir's Secret Sharing
 const shares = [
-  String("801").concat(String(hashPwd2)),
+  String("801").concat(String(hashPwd1)),
   String("802").concat(String(gamma)),
 ];
 
