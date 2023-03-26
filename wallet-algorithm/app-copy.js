@@ -44,6 +44,17 @@ async function random32() {
   return response;
 }
 
+function hashToEllipticCurvePoint(hv) {
+  const hashValue = BigInteger(String(hv));
+  const bufferHashValue = Buffer.from(hash(String(hv)), "hex");
+  const ecPoint = ecparams.pointFromX(true, hashValue);
+  while (ecparams.isOnCurve(ecPoint) == false) {
+    bufferHashValue = Buffer.from(hash(Buffer.toString()), "hex");
+    ecPoint = ecparams.pointFromX(true, BigInteger.fromBuffer(bufferHashValue));
+  }
+  return String(ecPoint.affineX);
+}
+
 function ecPointExponentiation(sp, exp) {
   const startPoint = BigInteger(String(sp));
   const exponent = BigInteger(String(exp));
@@ -56,17 +67,6 @@ function ecInverse(Cr) {
   const key = BigInteger(String(Cr));
   const keyInv = key.modInverse(ecparams.n);
   return keyInv.toString();
-}
-
-function hashToEllipticCurvePoint(hv) {
-  const hashValue = BigInteger(String(hv));
-  const bufferHashValue = Buffer.from(hash(String(hv)), "hex");
-  const ecPoint = ecparams.pointFromX(true, hashValue);
-  while (ecparams.isOnCurve(ecPoint) == false) {
-    bufferHashValue = Buffer.from(hash(Buffer.toString()), "hex");
-    ecPoint = ecparams.pointFromX(true, BigInteger.fromBuffer(bufferHashValue));
-  }
-  return String(ecPoint.affineX);
 }
 
 function secretToUint8Array(secret) {

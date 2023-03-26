@@ -15,6 +15,6 @@ db.once("open", () => console.log("mongoDB connected"));
 app.use(express.json());
 const users = require("./routes/users");
 
-app.use("/users", users);
+app.use("/", users);
 
 app.listen(3001, () => console.log("Server Started"));
