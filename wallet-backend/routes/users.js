@@ -214,6 +214,9 @@ router.post("/init", async (req, res) => {
     const authenticatorSecret = user.authenticatorSecret;
     // Verify the token
     const verified = verifyAuthSecret(authenticatorSecret, token);
+    if (!verified) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
     // Add the encrypted secrets to socialRecoveryHelpers array in mongoDB
     // Loop through the recoveryHelpers array and update the user record for each one
     for (const helper of encryptedSecrets) {
