@@ -1,9 +1,9 @@
+import React from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BottomFooter } from "./components/BottomFooter";
-import { DashboardLanding } from "./components/Dashboard/DashboardLanding";
-import { LandingPage } from "./components/LandingPage";
 import { Nav } from "./components/Nav";
+import Trade from "./components/Trade";
 
 import { ConfigureStore } from "./data/ConfigureStore";
 
@@ -11,17 +11,20 @@ const store = ConfigureStore();
 
 
 function App() {
+  const [show, setShow] = React.useState(false)
+  const onClose = () => {
+    // console.log('close')
+    setShow(false)
+  }
   return (
     <Provider store={store}>
       <Routes>
         <Route path="/" element={<div className="z-0">
-          <Nav />
-          <LandingPage />
-          <BottomFooter />
+          <Nav setShow={setShow} show={show} onClose={onClose} />
         </div>} />
         <Route path="/dashboard" element={<div className="z-0">
           <Nav />
-          <DashboardLanding />
+          <Trade setShow={setShow} />
           <BottomFooter />
         </div>} />
       </Routes>

@@ -21,7 +21,7 @@ export const Sec1 = () => {
         </Modal>
         <div className='flex flex-col justify-start items-start space-y-3'>
             <div className='text-2xl tracking-wide font-light'>
-                Hello Arthur!
+                Hello !!
             </div>
             <div className='flex flex-row justify-between space-x-10 '>
                 <Card className=''>
@@ -33,7 +33,7 @@ export const Sec1 = () => {
                     </p> */}
                     <div className='grid grid-cols-3 justify-evenly items-start gap-x-10'>
                         <div className='flex flex-row justify-start items-center space-x-3'>
-                            <div className='bg-black h-10 w-10 rounded-full'>hi</div>
+                            <div className='bg-black h-10 w-10 rounded-full'></div>
                             <div className='flex flex-col justify-start items-start'>
                                 <div className='font-normal uppercase text-lg'>
                                     Wallet Address

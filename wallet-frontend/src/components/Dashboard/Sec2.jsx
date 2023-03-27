@@ -27,31 +27,7 @@ export const Sec2 = () => {
                     </div>
                     <div className='flex flex-row justify-start items-center space-x-3'>
                         <div>
-                            <BsFillCalendarDateFill/>
-                        </div>
-                        <div>
-                            Dec 24,2021
-                        </div>  
-                    </div>
-                    <div>
-                        BTC 2
-                    </div>
-                </div>
-                <div className='pt-2 grid grid-cols-4 gap-x-10 place-content-start place-items-center'>
-                    <div className='flex flex-row justify-start items-center space-x-3'>
-                        <div>
-                            <BsArrowDownLeftCircleFill size={25} />
-                        </div>
-                        <div className='text-lg'>
-                            Receive
-                        </div>
-                    </div>
-                    <div>
-                        Rony Joseph
-                    </div>
-                    <div className='flex flex-row justify-start items-center space-x-3'>
-                        <div>
-                        <BsFillCalendarDateFill/>
+                            <BsFillCalendarDateFill />
                         </div>
                         <div>
                             Dec 24,2021
@@ -61,6 +37,7 @@ export const Sec2 = () => {
                         BTC 2
                     </div>
                 </div>
+                
 
             </Card>
         </div>

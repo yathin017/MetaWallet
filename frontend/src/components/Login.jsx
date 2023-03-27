@@ -7,10 +7,12 @@ export const Login = () => {
         email: '',
         password1: '',
         password2: '',
-        token:''
+        token: ''
     })
-    const {handleLogin} = useAPI();
+    const { handleLogin } = useAPI();
     return (
+
+      
         <Card className='cardlogin'>
             <h5 className="mb-3 text-base font-semibold text-gray-900 dark:text-white lg:text-xl">
                 Login to Transact with us
@@ -112,7 +114,7 @@ export const Login = () => {
                 </div>
             </div>
 
-        
+
         </Card>
     )
 }
