@@ -1,6 +1,6 @@
 import {
     SIGN_IN, SIGN_IN_SUCCESS,
-    TOKEN_SUCCESS,SOCIAL_RECOVERY_SUCCESS,HASH_EMAIL,INTIALIZE_LOGIN
+    TOKEN_SUCCESS,SOCIAL_RECOVERY_SUCCESS,HASH_EMAIL,INTIALIZE_LOGIN,GOOGLE_LOGIN_SUCCESS
   } from "./types";
   
   const initialState = {
@@ -12,21 +12,36 @@ import {
       hashpassword: null,
       publicKey: null,
       walletAddress: null,
-      privateKey:null
+      privateKey:null,
+      email:null,
+      picture:null,
     },
     loading: false,
-    isTokenLoading: false,
+    isUserLoggedin: false,
     error: null,
     message: null,
-    qrLoading: 0,
+    qrLoading: -1,
     userAuthenticatonSecret: null,
     gamma:null,
+    loginLoading:0,
+    
     
     
   };
   
   const useReducer = (state = initialState, action) => {
     switch (action.type) {
+      case GOOGLE_LOGIN_SUCCESS:
+        return {
+          ...state,
+          userData: {
+            ...state.userData,
+            email: action.payload.email,
+            picture: action.payload.picture,
+          },
+          qrLoading: 0,
+          loginLoading:1,
+        };
       case SIGN_IN:
         return{
           ...state,
@@ -61,11 +76,13 @@ import {
             walletAddress: action.payload.publicAddress,
             privateKey:action.payload.privateKey
           },
+          
         };
       case TOKEN_SUCCESS:
         return {
           ...state,
           qrLoading: 3,
+          isUserLoggedin: true,
         };
 
       case INTIALIZE_LOGIN:

@@ -1,6 +1,16 @@
 import {
-  SIGN_IN, SIGN_IN_SUCCESS, TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN
+  SIGN_IN, SIGN_IN_SUCCESS, TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN,GOOGLE_LOGIN_SUCCESS
 } from "./types";
+
+export function setGoogleLoginSuccess(email,picture) {
+  return {
+    type: GOOGLE_LOGIN_SUCCESS,
+    payload: {
+      email: email,
+      picture: picture,
+    },
+  };
+}
 
 export function setSignin() {
   return {

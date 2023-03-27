@@ -3,15 +3,15 @@ import React from 'react'
 import { BsFacebook, BsGithub, BsInstagram, BsTwitter } from 'react-icons/bs'
 export const BottomFooter = () => {
     return (
-        <Footer container={true} className='footer '>
-            <div className="w-full">
-                <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">
+        <Footer container={true} className='footer'>
+            <div className="w-full bg-[#192134]">
+                <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1 bg-[#192134]">
                     <a href='/'>
-                        <img src="./MetaWallet1.png"
+                        <img src="./MetaWallet1.svg"
                             alt="MetaWallet Logo"
-                            className="w-[140px] h-[130px] cursor-pointer" />
+                            className="w-[140px] cursor-pointer" />
                     </a>
-                    <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
+                    <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6 bg-[#192134]">
                         <div>
                             <Footer.Title title="about" />
                             <Footer.LinkGroup col={true}>

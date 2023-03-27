@@ -7,20 +7,20 @@ import { useSelector } from 'react-redux'
 // import QRCode from 'react-qr-code'
 import { QRCode } from 'react-qrcode-logo';
 import logo from './MetaWallet1.png'
-import Select from 'react-select'
+import { GoogleLogin } from '@react-oauth/google'
+import jwtDecode from 'jwt-decode'
 
 const GetStarted = ({ onClose }) => {
+    const [matchingPasswords, setMatchingPasswords] = useState(false)
+    const { handleLogin, handleCreateAccount, handleSocialRecovery, handleIntialization, handleGmailSuccess } = useAPI();
+    const { qrLoading, userAuthenticatonSecret, gamma, userData, loginLoading } = useSelector(state => state.users)
+    const [selectedOption, setSelectedOption] = useState(0)
+    const [showEmail, setShowEmail] = useState(false)
     const [userdata, setuserdata] = React.useState({
-        email: '',
         password1: '',
         password2: '',
         otp: ''
     })
-    const [matchingPasswords,setMatchingPasswords] = useState(false)
-    const { handleLogin, handleCreateAccount, handleSocialRecovery, handleIntialization } = useAPI();
-    const { qrLoading, userAuthenticatonSecret, gamma, userData } = useSelector(state => state.users)
-    const [selectedOption, setSelectedOption] = useState(0)
-    const [showEmail, setShowEmail] = useState(false)
     const [emails, setEmails] = useState({
         value: 0,
         email1: '',
@@ -28,15 +28,69 @@ const GetStarted = ({ onClose }) => {
         email3: '',
         email4: '',
     })
-    console.log(userdata)
+    console.log(userData.email)
     useEffect(() => {
-        if(userdata.password1 === userdata.password2 && userdata.password1 !== '' && userdata.password2 !== ''){
+        if (userdata.password1 === userdata.password2 && userdata.password1 !== '' && userdata.password2 !== '') {
             setMatchingPasswords(true)
         }
-        else{
+        else {
             setMatchingPasswords(false)
         }
     }, [userdata])
+    console.log(userdata)
+
+    const GoogleLoginComponent = () => {
+        return (
+            <div className="mb-3 text-center flex flex-col justify-center items-center space-y-5">
+                <div>
+                    <div className='text-xl text-gray-700'>Continue using Meta Wallet</div>
+                    <div className='text-md text-gray-500'>Use your Google Account to verify your email <span className='font-semibold'>Get Started Now!</span></div>
+                </div>
+                <GoogleLogin
+                    theme='filled_black'
+                    text={'continue_with'}
+                    shape='pill'
+                    logo_alignment='left'
+                    onSuccess={(credentialResponse) => {
+                        console.log(credentialResponse);
+                        if (credentialResponse.credential != null) {
+                            const USER_CREDENTIAL = jwtDecode(credentialResponse.credential);
+                            handleGmailSuccess(USER_CREDENTIAL?.email, USER_CREDENTIAL?.picture,'login')
+                        }
+                    }}
+                    onError={() => {
+                        console.log('Login Failed');
+                    }}
+                />
+            </div>
+        )
+    }
+    const GoogleSignupComponent = () => {
+        return (
+            <div className="mb-3 text-center flex flex-col justify-center items-center space-y-5">
+                <div>
+                    <div className='text-xl text-gray-700'>Start using Meta Wallet</div>
+                    <div className='text-md text-gray-500'>Use your Google Account to verify your email</div>
+                </div>
+                <GoogleLogin
+                    theme='filled_black'
+                    text={'signup_with'}
+                    shape='pill'
+                    logo_alignment='left'
+                    onSuccess={(credentialResponse) => {
+                        console.log(credentialResponse);
+                        if (credentialResponse.credential != null) {
+                            const USER_CREDENTIAL = jwtDecode(credentialResponse.credential);
+                            handleGmailSuccess(USER_CREDENTIAL?.email, USER_CREDENTIAL?.picture,'signup')
+                        }
+                    }}
+                    onError={() => {
+                        console.log('Login Failed');
+                    }}
+                />
+            </div>
+        )
+    }
 
 
     return (
@@ -56,14 +110,19 @@ const GetStarted = ({ onClose }) => {
             >
                 <Tabs.Item
                     title="Login"
-                    active={true}
                     icon={AiOutlineLogin}
                 >
                     <>
-                        <h5 className="mb-3 text-base font-semibold text-gray-900 dark:text-white lg:text-xl">
-                            Login to Transact with us
-                        </h5>
-                        <div>
+
+                        {
+                            (loginLoading === 0) && <>
+                                {<GoogleLoginComponent type={'login'} />}
+                            </>
+                        }
+                        {(loginLoading) === 1 && <div>
+                            <h5 className="mb-3 text-base font-semibold text-gray-900 dark:text-white lg:text-xl">
+                                Login to Transact with us
+                            </h5>
                             <div className="mb-3">
                                 <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
                                     Email Address
@@ -72,13 +131,9 @@ const GetStarted = ({ onClose }) => {
                                     type="email"
                                     name="email"
                                     id="email"
-                                    placeholder=""
-                                    onChange={(e) => {
-                                        setuserdata({
-                                            ...userdata,
-                                            email: e.target.value
-                                        })
-                                    }}
+                                    placeholder={userData.email}
+                                    disabled
+                                    readonly
                                     className="block w-full px-4 py-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline-gray"
                                 />
                             </div>
@@ -100,24 +155,6 @@ const GetStarted = ({ onClose }) => {
                                     className="block w-full px-4 py-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline-gray"
                                 />
                             </div>
-                            {/* <div className="mb-3">
-                                <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                                    Password 2
-                                </label>
-                                <input
-                                    type="password"
-                                    name="password2"
-                                    id="password2"
-                                    placeholder=""
-                                    onChange={(e) => {
-                                        setuserdata({
-                                            ...userdata,
-                                            password2: e.target.value
-                                        })
-                                    }}
-                                    className="block w-full px-4 py-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline-gray"
-                                />
-                            </div> */}
                             <div className="mb-3">
                                 <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
                                     OTP
@@ -148,7 +185,7 @@ const GetStarted = ({ onClose }) => {
                             <div className="mb-3">
                                 <button
                                     onClick={() => {
-                                        handleLogin(userdata.email, userdata.password1, userdata.otp)
+                                        handleLogin(userData.email, userdata.password1, userdata.otp)
                                     }}
                                     className="w-full px-4 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo"
                                 >
@@ -161,6 +198,7 @@ const GetStarted = ({ onClose }) => {
                                 </a>
                             </div>
                         </div>
+                        }
                     </>
                 </Tabs.Item>
                 <Tabs.Item
@@ -244,13 +282,9 @@ const GetStarted = ({ onClose }) => {
                                         type="email"
                                         name="email"
                                         id="email"
-                                        placeholder=""
-                                        onChange={(e) => {
-                                            setuserdata({
-                                                ...userdata,
-                                                email: e.target.value
-                                            })
-                                        }}
+                                        placeholder={userData.email}
+                                        disabled
+                                        readonly
                                         className="block w-full px-4 py-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline-gray"
                                     />
                                 </div>
@@ -302,11 +336,11 @@ const GetStarted = ({ onClose }) => {
                                 <div className="mb-3">
                                     <button
                                         onClick={() => {
-                                            if(matchingPasswords){
+                                            if (matchingPasswords) {
                                                 console.log('Passwords Matched')
-                                            handleCreateAccount(userdata.email, userdata.password1)
+                                                handleCreateAccount(userData.email, userdata.password1)
                                             }
-                                            else{
+                                            else {
                                                 window.alert("Passwords do not match!")
                                             }
                                         }}
@@ -465,6 +499,11 @@ const GetStarted = ({ onClose }) => {
                             <div className=" text-sm font-medium leading-5 text-white transition-colors duration-150 bg-indigo-600 border border-transparent rounded-lg active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:shadow-outline-indigo text-center py-2 px-4 cursor-pointer mt-3" onClick={onClose}>
                                 Start Now!
                             </div>
+                        </>
+                    }
+                    {
+                        (qrLoading === -1) && <>
+                            {<GoogleSignupComponent />}
                         </>
                     }
 

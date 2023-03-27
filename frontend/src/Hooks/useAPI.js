@@ -11,8 +11,8 @@ import { Buffer } from "buffer";
 import secrets from "../Utils/secrets";
 import { ethers } from "ethers";
 // Import 'Kyber'
-import { KeyGen512 } from "../Utils/kyber";
-import { intializeLogin, setHashEmail, setSignin, setSigninSuccess, setSocialRecoverySuccess, setTokenSuccess } from "../data/users/action";
+import kyber, { KeyGen512 } from "../Utils/kyber";
+import { intializeLogin, setGoogleLoginSuccess, setHashEmail, setSignin, setSigninSuccess, setSocialRecoverySuccess, setTokenSuccess } from "../data/users/action";
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -40,6 +40,7 @@ function useAPI() {
   const location = useLocation();
   const dispatch = useDispatch();
   const [recoveryHelpers, setrecoveryHelpers] = useState([]);
+  const [encryptedSecrets, setencryptedSecrets] = useState([]);
   const LOCAL_HOST_API = "http://localhost:3001";
   const hash = (message) => {
     const rounds = 12;
@@ -105,6 +106,15 @@ function useAPI() {
   }
 
 
+
+  const handleGmailSuccess = (email, picture, type) => {
+    if (type == 'login') {
+      dispatch(setGoogleLoginSuccess(email, picture,'login'));
+    }
+    else if (type == 'signup') {
+      dispatch(setSigninSuccess(email, picture,'signup'));
+    }
+  }
   const handleCreateAccount = async (email, password1) => {
     dispatch(setSignin());
     const hashEmail = hash(email)
@@ -116,24 +126,7 @@ function useAPI() {
       Cr
     );
     const hashPwd1 = hash(password1);
-
     dispatch(setHashEmail(hashEmail, alpha, CrInv, hashPwd1));
-
-    // const mainshare = secrets.newShare("4", shares);
-    // console.log("NEW SHARE: " + mainshare);
-
-    // const secret = secrets.combine(shares);
-    // console.log("SECRET: " + secret);
-
-    // const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
-    // // console.log("PUBLIC KEY: " + keyPair[0]);
-    // // console.log("PRIVATE KEY: " + keyPair[1]);
-
-    // const wallet = new ethers.Wallet(hash(keyPair[1]));
-    // console.log("ADDRESS: ", wallet.address);
-    // if (data) {
-    //   navigate("/dashboard")
-    // }
   }
 
   const handleSocialRecovery = async (hashEmail, alpha, CrInv, hashpassword, emailData) => {
@@ -147,7 +140,6 @@ function useAPI() {
     else if (emailData.value == 4) {
       setrecoveryHelpers([...recoveryHelpers, hash(emailData.email1), hash(emailData.email2), hash(emailData.email3), hash(emailData.email4)])
     }
-    console.log(recoveryHelpers)
 
     const response = await fetch(`${LOCAL_HOST_API}/create`, {
       method: "POST",
@@ -169,41 +161,69 @@ function useAPI() {
       String("801").concat(String(hashpassword)),
       String("802").concat(String(gamma)),
     ];
-    console.log(shares);
     // Pending Work :- Create encryptedSecrets and store it in the Redux Store
     if (emailData.value >= 2) {
       const share1 = secrets.newShare("3", shares);
-      // console.log("SHARE 1: " + share1);
       const share2 = secrets.newShare("4", shares);
-      // console.log("SHARE 2: " + share2);
+      // To generate a public and private key pair (pk, sk)
+      //  let pk_sk = kyber.KeyGen512();
+      //  let pk = pk_sk[0];
+      //  let sk = pk_sk[1];
+      // To generate a random 256 bit symmetric key (ss) and its encapsulation (c)
+      let c_ss_1 = kyber.Encrypt512(share1);
+      let encapsulation1 = c_ss_1[0];
+      let c_ss_2 = kyber.Encrypt512(share2);
+      let encapsulation2 = c_ss_2[0];
+      setencryptedSecrets([...encryptedSecrets,
+      {
+        username: hash(emailData.email1),
+        secret: encapsulation1
+      },
+      {
+        username: hash(emailData.email2),
+        secret: encapsulation2
+      },
+      ])
+      //  let symmetric_key = c_ss[1];
 
     }
     if (emailData.value >= 3) {
       const share3 = secrets.newShare("5", shares);
-      // console.log("SHARE 3: " + share3);
+      let c_ss_3 = kyber.Encrypt512(share3);
+      let encapsulation3 = c_ss_3[0];
+      setencryptedSecrets([...encryptedSecrets,
+      {
+        username: hash(emailData.email3),
+        secret: encapsulation3
+      }
+      ])
     }
     if (emailData.value >= 4) {
       const share4 = secrets.newShare("6", shares);
-      // console.log("SHARE 4: " + share4);
+      let c_ss_4 = kyber.Encrypt512(share4);
+      let encapsulation4 = c_ss_4[0];
+      setencryptedSecrets([...encryptedSecrets,
+      {
+        username: hash(emailData.email4),
+        secret: encapsulation4
+      }
+      ])
     }
 
     const secret = secrets.combine(shares);
     // console.log("SECRET: " + secret);
     const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
-    console.log("KEY PAIR: ", keyPair);
 
     // PUBLIC KEY :- keyPair[0]
 
     const wallet = new ethers.Wallet(hash(keyPair[1]));
-    console.log("PRIVATE KEY: ", wallet.privateKey);
-    console.log("ADDRESS: ", wallet.address);
 
     dispatch(setSocialRecoverySuccess(keyPair[0], wallet.address, hash(keyPair[1])))
 
   }
 
   const handleIntialization = async (otp, hashEmail, publicKey, publicAddress) => {
-    console.log(otp, hashEmail, publicKey, publicAddress)
+    console.log(encryptedSecrets)
     const response = await fetch(`${LOCAL_HOST_API}/init`, {
       method: "POST",
       headers: {
@@ -263,6 +283,7 @@ function useAPI() {
     console.log("ADDRESS: ", wallet.address);
     if (data?.message === 'Login successful') {
       dispatch(intializeLogin(hashEmail, alpha, CrInv, keyPair[0], wallet.address, hash(keyPair[1])));
+      dispatch(setTokenSuccess())
       navigate("/dashboard")
     }
   }
@@ -299,7 +320,8 @@ function useAPI() {
     handleCreateAccount,
     handleLogin,
     handleSocialRecovery,
-    handleIntialization
+    handleIntialization,
+    handleGmailSuccess
   };
 }
 
