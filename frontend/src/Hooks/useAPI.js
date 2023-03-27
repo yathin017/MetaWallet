@@ -112,7 +112,7 @@ function useAPI() {
       dispatch(setGoogleLoginSuccess(email, picture,'login'));
     }
     else if (type == 'signup') {
-      dispatch(setSigninSuccess(email, picture,'signup'));
+      dispatch(setGoogleLoginSuccess(email, picture,'signup'));
     }
   }
   const handleCreateAccount = async (email, password1) => {

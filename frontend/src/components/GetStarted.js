@@ -28,7 +28,6 @@ const GetStarted = ({ onClose }) => {
         email3: '',
         email4: '',
     })
-    console.log(userData.email)
     useEffect(() => {
         if (userdata.password1 === userdata.password2 && userdata.password1 !== '' && userdata.password2 !== '') {
             setMatchingPasswords(true)
@@ -37,7 +36,6 @@ const GetStarted = ({ onClose }) => {
             setMatchingPasswords(false)
         }
     }, [userdata])
-    console.log(userdata)
 
     const GoogleLoginComponent = () => {
         return (
