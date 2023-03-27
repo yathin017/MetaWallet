@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -17,18 +18,21 @@ function App() {
     setShow(false)
   }
   return (
-    <Provider store={store}>
-      <Routes>
-        <Route path="/" element={<div className="z-0">
-          <Nav setShow={setShow} show={show} onClose={onClose} />
-        </div>} />
-        <Route path="/dashboard" element={<div className="z-0">
-          <Nav />
-          <Trade setShow={setShow} />
-          <BottomFooter />
-        </div>} />
-      </Routes>
-    </Provider>
+    <GoogleOAuthProvider clientId="511025188680-lp5dp9v97lqm3jpc90rvndoicsi6e9oj.apps.googleusercontent.com">
+      <Provider store={store}>
+        <Routes>
+          <Route path="/" element={<div className="z-0 bg-[#192134]">
+            <Nav setShow={setShow} show={show} onClose={onClose} />
+            <BottomFooter />
+          </div>} />
+          <Route path="/dashboard" element={<div className="z-0 bg-[#192134]">
+            <Nav />
+            <Trade setShow={setShow} />
+            <BottomFooter />
+          </div>} />
+        </Routes>
+      </Provider>
+    </GoogleOAuthProvider>
   );
 }
 
