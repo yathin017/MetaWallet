@@ -279,23 +279,24 @@ router.get("/:username", isCached, getUser, (req, res) => {
 });
 
 // Rekey
-router.patch("/rekey/:username", getUser, verifyToken, async (req, res) => {
-  const { username } = req.params.username;
-  const randomValue = await random32();
-  const beta = ecPointExponentiation(req.body.alpha, randomValue);
-  res.user.random = randomValue;
+router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
+  // const { username } = req.params.username;
   try {
-    const updatedUser = await res.user.save();
+    const randomValue = await random32();
+    const beta = ecPointExponentiation(req.body.alpha, randomValue);
+    const user = res.user;
+    user.random = randomValue;
+    const updatedUser = await user.save();
     // Save to redis for caching
-    redisClient.set(username, JSON.stringify(updatedUser));
-    res.json({ beta: { beta } });
+    redisClient.set(req.params.username, JSON.stringify(updatedUser));
+    res.json({ beta: { beta }, socialRecoveryHelpers: user.socialRecoveryHelpers  });
     sendNotification("Your MetaWallet Rekeyed", "MetaWallet Rekeyed", `Your MetaWallet has been rekeyed on ${currentDate()}. Your username is ${res.user.username} and new publicAddress is ${res.user.publicAddress}. Please dont forget your MetaWallet passwords, incase you do you can recover your MetaWallet using your social recovery helpers.`, res.user.publicAddress);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
-router.patch("/rekey-init/:username", getUser, verifyToken, async (req, res) => {
+router.post("/rekey-init/:username", getUser, verifyToken, async (req, res) => {
   const { encryptedSecrets, publicKey, publicAddress } = req.body;
   if (!publicKey || !publicAddress) {
     return res.status(400).json({ message: "Missing parameters" });
