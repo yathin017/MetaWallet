@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router';
 const Trade = ({setShow}) => {
     const navigate = useNavigate();
     const { userData } = useSelector(state => state.users);
-    console.log(userData);
     useEffect(() => {
         if (userData.privateKey === null) {
             navigate('/')
@@ -21,10 +20,10 @@ const Trade = ({setShow}) => {
                         Transact
                     </div>
                     <div className='mt-3'>
-                        <input className='ant-input' placeholder='0' />
+                        <input className='ant-input' autoComplete='off' type='text' placeholder='0' />
                     </div>
                     <div className='mt-3 swapButton'>
-                        Complete Swap
+                        Complete Transaction
                     </div>
                 </div>
             </div>
