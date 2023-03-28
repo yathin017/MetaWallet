@@ -315,7 +315,7 @@ router.post("/rekey/:username", isCached, getUser, verifyToken, async (req, res)
   }
 });
 
-router.post("/rekey-init/:username", getUser, verifyToken, async (req, res) => {
+router.post("/rekey-init/:username", isCached, getUser, verifyToken, async (req, res) => {
   const { encryptedSecrets, publicKey, walletAddress } = req.body;
   if (!publicKey || !walletAddress) {
     return res.status(400).json({ message: "Missing parameters" });
