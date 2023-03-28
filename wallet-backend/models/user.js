@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   publicKey: {
     type: String,
   },
-  publicAddress: {
+  walletAddress: {
     type: String,
   },
   socialRecoveryHelpers: [{"username": String, "secretShare": String}]
