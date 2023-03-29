@@ -11,22 +11,27 @@ const User = require("../models/user");
 require("dotenv").config();
 
 // Import Redis client library
-const redis = require("redis");
+const Redis = require("redis");
 
-const redisClient = redis.createClient({
-  password: process.env.REDIS_PASSWORD,
-  host: "redis-16977.c1.asia-northeast1-1.gce.cloud.redislabs.com",
-  port: 16977,
+const redisClient = Redis.createClient({
+  url: `redis://default:${process.env.REDIS_PASSWORD}@redis-16977.c1.asia-northeast1-1.gce.cloud.redislabs.com:16977`
+});
+
+// const redisClient = Redis.createClient({
+//   password: process.env.REDIS_PASSWORD,
+//   host: "redis-16977.c1.asia-northeast1-1.gce.cloud.redislabs.com",
+//   port: 16977,
+// });
+
+// Log any Redis connection errors
+redisClient.on("error", (error) => {
+  console.error(error);
 });
 
 redisClient.on("connect", () => {
   console.log("Redis connected");
 });
 
-// Log any Redis connection errors
-redisClient.on("error", (error) => {
-  console.error(error);
-});
 
 // Functions
 async function fetchRandomBytes() {
@@ -111,21 +116,21 @@ function currentDate(){
 
 // Middleware for checking if the user is cached in Redis
 const isCached = (req, res, next) => {
-  const { username } = req.body || req.params.username;
-  if (!username) {
-    return res.status(400).json({ message: "Missing parameters" });
+  const username = req.params.username;
+  if (username == null) {
+    return res.status(400).json({ message: "Missing parameters in cache" });
   }
-  //First check in Redis
-  redisClient.get(username, (err, user) => {
+  // Check if the user is cached in Redis and pass object to next middleware
+  redisClient.get(username, (err, data) => {
     if (err) {
-      console.log(err);
+      throw err;
     }
-    if (user) {
-      const cacheReponse = JSON.parse(user);
-      // return res.status(200).json(reponse);
-      res.cacheReponse = cacheReponse;
+    if (data != null) {
+      res.user = JSON.parse(data);
+      next();
+    } else {
+      next();
     }
-    next();
   });
 };
 
@@ -133,15 +138,15 @@ async function getUser(req, res, next) {
   const username = req.params.username;
   // Validate the request body
   if (!username) {
-    return res.status(400).json({ message: "Missing parameters" });
+    return res.status(400).json({ message: "Missing parameters in get user" });
   }
-  // Check if the user is cached in Redis
-  const user = res.cacheReponse;
-  if(user){
-    res.cacheReponse = user;
-    next();
-  }
+  // Check if the user is cached in Redis and pass object to next middleware
   try {
+    isCached(req, res, next);
+    // If cached, pass the user object to the next middleware
+    if (res.user) {
+      return next();
+    }
     // Find the user with the specified username
     const user = await User.findOne({ username });
     if (user == null) {
@@ -159,7 +164,7 @@ async function getUser(req, res, next) {
 function verifyToken(req, res, next) {
   const token = req.body.token;
   if (!token) {
-    return res.status(400).json({ message: "Missing parameters" });
+    return res.status(400).json({ message: "Missing parameters in verify token" });
   }
   try {
     const user = res.user;
@@ -167,6 +172,9 @@ function verifyToken(req, res, next) {
     if (!verify) {
       return res.status(401).json({ message: "Invalid token" });
     }
+    // Pass the user, verify object to the next middleware
+    res.user = user;
+    res.verify = verify;
     next();
   } catch (err) {
     next(err);
@@ -206,8 +214,6 @@ router.post("/create", async (req, res) => {
       authenticatorSecret: authSecret.ascii
     });
     await user.save();
-    // Save to redis for caching
-    redisClient.set(username, JSON.stringify(user));
     return res
       .status(200)
       .json({ beta: { beta }, authenticatorSecret: authSecret.base32, helperKeys: { helperKeys } });
@@ -216,10 +222,10 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.post("/init/:username", isCached, getUser, verifyToken, async (req, res) => {
+router.post("/init/:username", getUser, verifyToken, async (req, res) => {
   const { encryptedSecrets, publicKey, walletAddress } = req.body;
   if (!publicKey || !walletAddress) {
-    return res.status(400).json({ message: "Missing parameters" });
+    return res.status(400).json({ message: "Missing parameters in post req" });
   }
   try {
     const user = res.user;
@@ -228,6 +234,102 @@ router.post("/init/:username", isCached, getUser, verifyToken, async (req, res) 
     if (user.publicKey && user.walletAddress) {
       return res.status(409).json({ message: "User already initialized" });
     }
+    if (!verified) {
+      return res.status(401).json({ message: "Token not verified" });
+    }
+    // Add the encrypted secrets to socialRecoveryHelpers array in mongoDB
+    // Loop through the recoveryHelpers array and update the user record for each one
+    for (const helper of encryptedSecrets) {
+      // Check if the helper's username already exists in the database
+      const existingHelper = await User.findOne({ username: helper.username });
+      if (!existingHelper) {
+        return res.status(409).json({ error: "One or more recovery helper usernames do not match" });
+      }
+      // Add the helper's username and secretShare to the user's socialRecoveryHelpers array
+      user.socialRecoveryHelpers.push({
+        username: helper.username,
+        secretShare: helper.secretShare
+      });
+    }
+    // Add the public key and public address to the user record
+    user.publicKey = publicKey;
+    user.walletAddress = walletAddress;
+    // Save the updated user record to mongoDB
+    await user.save();
+    // Save to redis for caching
+    redisClient.set(user.username, JSON.stringify(user));
+    if (verified) {
+      return res.status(200).json({ message: "Token verified" });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+
+// Login
+router.post("/login/:username", isCached, getUser, verifyToken, async (req, res) => {
+  const { alpha } = req.body;
+  if (!alpha) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+  try{
+    const user = res.user;
+    // Check if the user has a public key and public address
+    if (!user.walletAddress) {
+      return res.status(400).json({ message: "User has not been initialized" });
+    }
+    const beta = ecPointExponentiation(alpha, user.random);
+    res.json({ beta: { beta }, message: "Login successful" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Get user
+router.get("/:username", isCached, getUser, (req, res) => {
+  try {
+    const user = res.user;
+    res.json(user.walletAddress);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Rekey
+router.post("/rekey/:username", verifyToken, async (req, res) => {
+  const { alpha } = req.body;
+  if (!alpha) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+  try {
+    const user = res.user;
+    // Fetch the user's recovery helper's public key from mongoDB
+    const recoveryHelpers = user.socialRecoveryHelpers.map(helper => helper.username);
+    const existingHelpers = await User.find({ username: { $in: recoveryHelpers } });
+    // Get the public key values of usernames in recoveryHelpers array
+    const helperKeys = existingHelpers.map(helper => helper.publicKey);
+    const randomValue = await random32();
+    const beta = ecPointExponentiation(alpha, randomValue);
+    user.random = randomValue;
+    await user.save();
+    res.json({ beta: { beta }, helperKeys: { helperKeys } });
+    sendNotification("Your MetaWallet Rekeyed", "MetaWallet Rekeyed", `Your MetaWallet has been rekeyed on ${currentDate()}. Your username is ${user.username} and new walletAddress is ${user.walletAddress}. Please dont forget your MetaWallet passwords, incase you do you can recover your MetaWallet using your social recovery helpers.`, user.walletAddress);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post("/rekey-init/:username", verifyToken, async (req, res) => {
+  const { encryptedSecrets, publicKey, walletAddress } = req.body;
+  if (!publicKey || !walletAddress) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+  try {
+    const user = res.user;
+    const verified = res.verify;
+    // Clear the user's socialRecoveryHelpers array
+    user.socialRecoveryHelpers = [];
     // Add the encrypted secrets to socialRecoveryHelpers array in mongoDB
     // Loop through the recoveryHelpers array and update the user record for each one
     for (const helper of encryptedSecrets) {
@@ -259,103 +361,9 @@ router.post("/init/:username", isCached, getUser, verifyToken, async (req, res) 
   }
 });
 
+// Change Password
 
-// Login
-router.post("/login/:username", isCached, getUser, verifyToken, async (req, res) => {
-  const { alpha } = req.body;
-  if (!alpha) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
-  try{
-    const user = res.user;
-    // Check if the user has a public key and public address
-    if (!user.publicKey || !user.walletAddress) {
-      return res.status(400).json({ message: "User has not been initialized" });
-    }
-    const beta = ecPointExponentiation(alpha, user.random);
-    res.json({ beta: { beta }, message: "Login successful" });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-});
-
-// Get user
-router.get("/:username", isCached, getUser, (req, res) => {
-  try {
-    const user = res.user;
-    res.json(user.walletAddress);
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-});
-
-// Rekey
-router.post("/rekey/:username", isCached, getUser, verifyToken, async (req, res) => {
-  const { alpha } = req.body;
-  if (!alpha) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
-  try {
-    const user = res.user;
-    // Fetch the user's recovery helper's public key from mongoDB
-    const recoveryHelpers = user.socialRecoveryHelpers.map(helper => helper.username);
-    const existingHelpers = await User.find({ username: { $in: recoveryHelpers } });
-    // Get the public key values of usernames in recoveryHelpers array
-    const helperKeys = existingHelpers.map(helper => helper.publicKey);
-    const randomValue = await random32();
-    const beta = ecPointExponentiation(alpha, randomValue);
-    user.random = randomValue;
-    const updatedUser = await user.save();
-    // Save to redis for caching
-    redisClient.set(user.username, JSON.stringify(updatedUser));
-    res.json({ beta: { beta }, helperKeys: { helperKeys } });
-    sendNotification("Your MetaWallet Rekeyed", "MetaWallet Rekeyed", `Your MetaWallet has been rekeyed on ${currentDate()}. Your username is ${user.username} and new walletAddress is ${user.walletAddress}. Please dont forget your MetaWallet passwords, incase you do you can recover your MetaWallet using your social recovery helpers.`, user.walletAddress);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-router.post("/rekey-init/:username", isCached, getUser, verifyToken, async (req, res) => {
-  const { encryptedSecrets, publicKey, walletAddress } = req.body;
-  if (!publicKey || !walletAddress) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
-  try {
-    const user = res.user;
-    const verified = res.verify;
-    // Clear the user's socialRecoveryHelpers array
-    user.socialRecoveryHelpers = [];
-    // Add the encrypted secrets to socialRecoveryHelpers array in mongoDB
-    // Loop through the recoveryHelpers array and update the user record for each one
-    for (const helper of encryptedSecrets) {
-      // Check if the helper's username already exists in the database
-      const existingHelper = await User.findOne({ username: helper.username });
-      if (!existingHelper) {
-        return res.status(409).json({ error: "One or more recovery helper usernames do not match" });
-      }
-      // Add the helper's username and secretShare to the user's socialRecoveryHelpers array
-      user.socialRecoveryHelpers.push({
-        username: helper.username,
-        secretShare: helper.secretShare
-      });
-    }
-    // Add the public key and public address to the user record
-    user.publicKey = publicKey;
-    user.walletAddress = walletAddress;
-    // Save the updated user record to the database
-    await user.save();
-    // Save to redis for caching
-    redisClient.set(username, JSON.stringify(user));
-    if (verified) {
-      return res.status(200).json({ message: "Token verified" });
-    } else {
-      return res.status(401).json({ message: "Token not verified" });
-    }
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-});
-
+// Recovery
 
 // Delete user
 router.delete("/delete/:username", getUser, verifyToken, async (req, res) => {
