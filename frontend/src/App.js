@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BottomFooter } from "./components/BottomFooter";
 import { Nav } from "./components/Nav";
+import Settings from "./components/Settings";
 import Trade from "./components/Trade";
 
 import { ConfigureStore } from "./data/ConfigureStore";
@@ -23,11 +24,18 @@ function App() {
         <Routes>
           <Route path="/" element={<div className="z-0 bg-[#192134]">
             <Nav setShow={setShow} show={show} onClose={onClose} />
+            <div className="h-[80vh]">
+            </div>
             <BottomFooter />
           </div>} />
           <Route path="/dashboard" element={<div className="z-0 bg-[#192134]">
-            <Nav />
+            <Nav setShow={setShow} show={show} onClose={onClose} />
             <Trade setShow={setShow} />
+            <BottomFooter />
+          </div>} />
+          <Route path="/settings" element={<div className="z-0 bg-[#192134]">
+            <Nav setShow={setShow} show={show} onClose={onClose} />
+            <Settings setShow={setShow} show={show} onClose={onClose} />
             <BottomFooter />
           </div>} />
         </Routes>

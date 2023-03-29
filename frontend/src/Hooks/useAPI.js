@@ -109,10 +109,10 @@ function useAPI() {
 
   const handleGmailSuccess = (email, picture, type) => {
     if (type == 'login') {
-      dispatch(setGoogleLoginSuccess(email, picture,'login'));
+      dispatch(setGoogleLoginSuccess(email, picture, 'login'));
     }
     else if (type == 'signup') {
-      dispatch(setGoogleLoginSuccess(email, picture,'signup'));
+      dispatch(setGoogleLoginSuccess(email, picture, 'signup'));
     }
   }
   const handleCreateAccount = async (email, password1) => {
@@ -224,21 +224,20 @@ function useAPI() {
 
   const handleIntialization = async (otp, hashEmail, publicKey, publicAddress) => {
     console.log(encryptedSecrets)
-    const response = await fetch(`${LOCAL_HOST_API}/init`, {
+    const response = await fetch(`${LOCAL_HOST_API}/init/${hashEmail}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         "username": hashEmail,
-        "encryptedSecrets": [],
+        "encryptedSecrets": encryptedSecrets,
         "token": otp,
         "publicKey": publicKey,
         "publicAddress": publicAddress
       })
     })
     const data = await response.json()
-    console.log("OTP Response", data);
     if (data?.message === 'Token verified') {
       dispatch(setTokenSuccess());
       navigate("/dashboard")
@@ -247,7 +246,7 @@ function useAPI() {
 
 
 
-  const handleLogin = async (email, password, otp) => {
+  const handleLogin = async (email, password, otp, setShow) => {
     // Username, Alpha, Token
     // dispatch(setSignin());
     const hashEmail = hash(email);
@@ -284,44 +283,61 @@ function useAPI() {
     if (data?.message === 'Login successful') {
       dispatch(intializeLogin(hashEmail, alpha, CrInv, keyPair[0], wallet.address, hash(keyPair[1])));
       dispatch(setTokenSuccess())
+      setShow(false)
       navigate("/dashboard")
     }
   }
 
+  const handleRekeying = async (email, password , alpha, CrInv, publicKey, publicAddress, otp) => {
+    // Username, Alpha, Token
+    // dispatch(setSignin());
+    const hashEmail = hash(email)
+    const hashPwd1 = hash(password);
+    const response = await fetch(`${LOCAL_HOST_API}/rekey/${hashEmail}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "token": otp,
+        "alpha": alpha
+      })
+    })
+    const data = await response.json()
+    console.log(data)
+    const gamma = ecModExponent(data?.beta?.beta, CrInv);
+    const shares = [
+      String("801").concat(String(hashPwd1)),
+      String("802").concat(String(gamma)),
+    ];
+    const secret = secrets.combine(shares);
+    const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
+    const wallet = new ethers.Wallet(hash(keyPair[1]));
+    console.log("ADDRESS: ", wallet.address);
+    const response1 = await fetch(`${LOCAL_HOST_API}/rekey-init/${hashEmail}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "token": otp,
+        "encryptedSecrets": [],
+        "publicKey": publicKey,
+        "publicAddress": publicAddress
+      })
+    });
+    const data1 = await response1.json();
+    console.log(data1);
 
-
-  // const handleUserLogout = useCallback(() => {
-  //   dispatch(setLogout());
-  //   logout()
-  //     .then((response) => {
-  //       dispatch(setLogoutSuccess(response.data.message));
-  //       dispatch(setHandleUserTokens(null));
-  //       notify("Logout successfull", "success");
-  //       navigate(0);
-  //     })
-  //     .catch((error) => {
-  //       dispatch(
-  //         setLogoutError(
-  //           error?.response?.data?.errors?.[0]
-  //             ? error?.response?.data?.errors?.[0]
-  //             : "Some server error occured, please try again later!"
-  //         )
-  //       );
-  //       notify(
-  //         error?.response?.data?.errors?.[0]?.message
-  //           ? error?.response?.data?.errors?.[0]?.message
-  //           : "Some server error occured, please try again later!",
-  //         "error"
-  //       );
-  //     });
-  // }, [dispatch, navigate]);
+  }
 
   return {
     handleCreateAccount,
     handleLogin,
     handleSocialRecovery,
     handleIntialization,
-    handleGmailSuccess
+    handleGmailSuccess,
+    handleRekeying
   };
 }
 

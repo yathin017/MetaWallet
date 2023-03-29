@@ -1,7 +1,7 @@
 import { Avatar, Button, Card, Dropdown, Modal, Navbar } from 'flowbite-react'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import GetStarted from './GetStarted'
 import { Login } from './Login'
 import { Signup } from './Signup'
@@ -14,9 +14,21 @@ export const Nav = ({ show, onClose, setShow }) => {
     //     setShow(false)
     //     // setShowsignup(false)
     // }
-    const { isUserLoggedin,userData } = useSelector(state => state.users);
+    const { isUserLoggedin, userData } = useSelector(state => state.users);
     const [showSettingsPanel, setshowSettingsPanel] = React.useState(false)
-
+    const navigate = useNavigate()
+    // const ref = useRef(null);
+    // useEffect(() => {
+    //     const handleClickOutside = (event) => {
+    //       if (ref.current && !ref.current.contains(event.target)) {
+    //         setshowSettingsPanel(false)
+    //       }
+    //     };
+    //     document.addEventListener('click', handleClickOutside, true);
+    //     return () => {
+    //       document.removeEventListener('click', handleClickOutside, true);
+    //     };
+    //   }, []);
     return (
         <>
             <Modal
@@ -27,7 +39,7 @@ export const Nav = ({ show, onClose, setShow }) => {
             >
                 <Modal.Header />
                 <Modal.Body>
-                    <GetStarted onClose={onClose} />
+                    <GetStarted onClose={onClose} setShow={setShow} />
                 </Modal.Body>
             </Modal>
             {/* <Modal
@@ -66,16 +78,16 @@ export const Nav = ({ show, onClose, setShow }) => {
                                                 <div id="dropdown" class="text-white z-10 divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700 absolute top-[11%] right-[1%]">
                                                     <ul class="py-2 text-sm text-gray-200" aria-labelledby="dropdownDefaultButton">
                                                         <li>
-                                                            <a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">Dashboard</a>
+                                                            <div onClick={() => { navigate('/dashboard') }} class="block px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer">Dashboard</div>
                                                         </li>
                                                         <li>
-                                                            <a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">Settings</a>
+                                                            <div onClick={() => { navigate('/settings') }} class="block px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer">Settings</div>
                                                         </li>
-                                                        <li>
+                                                        {/* <li>
                                                             <a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">Earnings</a>
-                                                        </li>
+                                                        </li> */}
                                                         <li>
-                                                            <a href="/" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">Sign out</a>
+                                                            <a href="/" class="block px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer">Sign out</a>
                                                         </li>
                                                     </ul>
                                                 </div>
