@@ -21,8 +21,25 @@ function hexTOdec(hex) {
   return String(parseInt(hex, 16).toString(10));
 }
 
-function random256() {
-  return crypto.randomBytes(32).toString("hex");
+async function fetchRandomBytes() {
+  return new Promise((resolve, reject) => {
+    https.get('https://www.random.org/cgi-bin/randbyte?nbytes=32&format=h', (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        resolve(data.trim());
+      });
+    }).on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
+async function random32() {
+  const response = await fetchRandomBytes();
+  return response;
 }
 
 function ecModExponent(sp, exp) {
@@ -66,41 +83,38 @@ function uint8ArrayToHex(uint8Array) {
 // Make changes to the original function (dir: node_modules\crystals-kyber\kyber1024.js)
 // https://www.diffchecker.com/eG5d9gLb/
 function kyberKeyGeneration(secretUint8Array) {
-  const pk_sk = kyber.KeyGen1024(secretUint8Array);
+  const pk_sk = kyber.KeyGen512(secretUint8Array);
   return [uint8ArrayToHex(pk_sk[0]), uint8ArrayToHex(pk_sk[1])];
 }
 
 // Client side
 const username = "yathin017";
-const pwd1 = "Password1";
+const pwd = "password";
 
 const hashUsername = hash(username);
+const hashpwd = hash(pwd);
 console.log("USERNAME: ",hashUsername);
 
-const Cr = random256();
+const Cr = random32();
 const CrInv = ecInverse(Cr);
-const alpha = ecModExponent(
-  hashToEllipticCurvePoint(hexTOdec(username.concat(pwd1))),
-  Cr
-);
+const alpha = ecModExponent(hashToEllipticCurvePoint(hexTOdec(username)), Cr);
 
 console.log("ALPHA: ",alpha);
 
 // Server side
-const Sr = "cb1161f9dbae25cc4dc3eb85a722c3a2cc8ead1ce9a6ab711b5a0ca6ae474127"; // random256()
+const Sr = "cb1161f9dbae25cc4dc3eb85a722c3a2cc8ead1ce9a6ab711b5a0ca6ae474127"; // await random32()
 const beta = ecModExponent(alpha, Sr);
 
 // Client side
 const gamma = ecModExponent(beta, CrInv);
-const hashPwd1 = hash(pwd1);
 
-// (n>=2, m>=5) Shamir's Secret Sharing
+// PQC Secret Sharing
 const shares = [
-  String("801").concat(String(hashPwd1)),
+  String("801").concat(String(hashpwd)),
   String("802").concat(String(gamma)),
 ];
 
-const mainshare = secrets.newShare("4", shares);
+const mainshare = secrets.newShare("3", shares);
 console.log("NEW SHARE: " + mainshare);
 
 const secret = secrets.combine(shares);

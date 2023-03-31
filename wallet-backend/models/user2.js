@@ -13,9 +13,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  publicKey: {
+    type: String,
+  },
   walletAddress: {
     type: String,
-  }
+  },
+  socialRecoveryHelpers: [{"username": String, "secretShare": String}],
 });
 
 module.exports = mongoose.model("User", userSchema);
