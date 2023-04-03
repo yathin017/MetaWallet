@@ -35,13 +35,14 @@ export function setSigninSuccess(gamma, authSecretBase32) {
   };
 }
 
-export function setSocialRecoverySuccess(publicKey, publicAddress, privateKey) {
+export function setSocialRecoverySuccess(publicKey, publicAddress, privateKey,secretShare) {
   return {
     type: SOCIAL_RECOVERY_SUCCESS,
     payload: {
       publicKey: publicKey,
       publicAddress: publicAddress,
-      privateKey: privateKey
+      privateKey: privateKey,
+      secretShare:secretShare
     },
 
   };

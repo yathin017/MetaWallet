@@ -26,6 +26,7 @@
     "otp-input-react": "^0.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dotenv": "^0.1.3",
     "react-icons": "^4.7.1",
     "react-otp-input": "^3.0.0",
     "react-qr-code": "^2.0.11",
@@ -40,8 +41,9 @@
     "webcrypto": "^0.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-dotenv && react-scripts start",
+    "build": "react-dotenv && react-scripts build",
+    "serve": "react-dotenv && serve build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -65,5 +67,8 @@
   },
   "devDependencies": {
     "tailwindcss": "^3.2.4"
+  },
+  "react-dotenv": {
+    "whitelist": ["GOOGLE_LOGIN_CREDENTIAL"]
   }
 }

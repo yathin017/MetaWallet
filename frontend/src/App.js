@@ -8,6 +8,7 @@ import Settings from "./components/Settings";
 import Trade from "./components/Trade";
 
 import { ConfigureStore } from "./data/ConfigureStore";
+import env from "react-dotenv";
 
 const store = ConfigureStore();
 
@@ -15,11 +16,10 @@ const store = ConfigureStore();
 function App() {
   const [show, setShow] = React.useState(false)
   const onClose = () => {
-    // console.log('close')
     setShow(false)
   }
   return (
-    <GoogleOAuthProvider clientId="511025188680-lp5dp9v97lqm3jpc90rvndoicsi6e9oj.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={env.GOOGLE_LOGIN_CREDENTIAL}>
       <Provider store={store}>
         <Routes>
           <Route path="/" element={<div className="z-0 bg-[#192134]">
