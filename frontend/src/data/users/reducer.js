@@ -15,6 +15,7 @@ import {
       privateKey:null,
       email:null,
       picture:null,
+      secretShare:null
     },
     loading: false,
     isUserLoggedin: false,
@@ -46,7 +47,7 @@ import {
         return{
           ...state,
           loading: true,
-          qrLoading: 1,
+          qrLoading: 2,
         }
       case HASH_EMAIL:
         return {
@@ -63,6 +64,7 @@ import {
         return {
           ...state,
           loading: false,
+          qrLoading: 2,
           gamma: action.payload.gamma,
           userAuthenticatonSecret: action.payload.authSecretBase32,
         };
@@ -74,7 +76,8 @@ import {
             ...state.userData,
             publicKey: action.payload.publicKey,
             walletAddress: action.payload.publicAddress,
-            privateKey:action.payload.privateKey
+            privateKey:action.payload.privateKey,
+            secretShare:action.payload.secretShare
           },
           
         };
