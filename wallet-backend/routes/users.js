@@ -144,12 +144,6 @@ async function getUser(req, res, next) {
     if (!/^[0-9a-fA-F]{64}$/.test(username)) {
       return res.status(400).json({ message: "Invalid username" });
     }
-    // Check if the user is cached in Redis and pass object to next middleware
-    isCached(req, res, next);
-    // If cached, pass the user object to the next middleware
-    if (res.user) {
-      return next();
-    }
     // Find the user with the specified username
     const user = await User.findOne({ username });
     if (user == null) {
@@ -172,7 +166,6 @@ function verifyToken(req, res, next) {
     }
     const user = res.user;
     const verify = verifyAuthSecret(user.authenticatorSecret, token);
-    console.log(verify)
     if (!verify) {
       return res.status(401).json({ message: "Invalid token" });
     }
@@ -263,7 +256,6 @@ router.post("/init/:username", getUser, verifyToken, async (req, res) => {
     // Save the updated user record to mongoDB
     await user.save();
     // Save to redis for caching
-    // console.log(user)
     redisClient.set(user.username, JSON.stringify(user));
     sendNotification("Your MetaWallet successfully created", "MetaWallet Created", `Your MetaWallet has been created on ${currentDate()}. Your username is ${user.username} and walletAddress is ${user.walletAddress}. We are not responsible in case you forget or lose password and secret key.`, user.walletAddress);
     if (verified) {
@@ -297,7 +289,6 @@ router.post("/login/:username", isCached, getUser, verifyToken, async (req, res)
 router.get("/:username", isCached, getUser, (req, res) => {
   try {
     const user = res.user;
-    console.log(user)
     res.json(user.walletAddress);
   } catch (err) {
     return res.status(500).json({ error: err.message });
