@@ -136,15 +136,15 @@ const isCached = (req, res, next) => {
 
 async function getUser(req, res, next) {
   const username = req.params.username;
-  // Validate the request body
-  if (!username) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
-  if (!/^[0-9a-fA-F]{64}$/.test(username)) {
-    return res.status(400).json({ message: "Invalid username" });
-  }
-  // Check if the user is cached in Redis and pass object to next middleware
   try {
+    // Validate the request body
+    if (!username) {
+      return res.status(400).json({ message: "Missing parameters" });
+    }
+    if (!/^[0-9a-fA-F]{64}$/.test(username)) {
+      return res.status(400).json({ message: "Invalid username" });
+    }
+    // Check if the user is cached in Redis and pass object to next middleware
     isCached(req, res, next);
     // If cached, pass the user object to the next middleware
     if (res.user) {
@@ -166,12 +166,13 @@ async function getUser(req, res, next) {
 // Middleware for verifying the authenticity of the token
 function verifyToken(req, res, next) {
   const token = req.body.token;
-  if (!token) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
   try {
+    if (!token) {
+      return res.status(400).json({ message: "Missing parameters" });
+    }
     const user = res.user;
     const verify = verifyAuthSecret(user.authenticatorSecret, token);
+    console.log(verify)
     if (!verify) {
       return res.status(401).json({ message: "Invalid token" });
     }
@@ -191,14 +192,14 @@ function verifyToken(req, res, next) {
 // Create a new user
 router.post("/create", async (req, res) => {
   const { username, alpha } = req.body;
-  if (!username || !alpha) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
-  // If username is not 256 bits hexadecimal, return error
-  if (!/^[0-9a-fA-F]{64}$/.test(username)) {
-    return res.status(400).json({ message: "Invalid username" });
-  }
   try {
+    if (!username || !alpha) {
+      return res.status(400).json({ message: "Missing parameters" });
+    }
+    // If username is not 256 bits hexadecimal, return error
+    if (!/^[0-9a-fA-F]{64}$/.test(username)) {
+      return res.status(400).json({ message: "Invalid username" });
+    }
     // Check if a record with the same username already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -225,10 +226,10 @@ router.post("/create", async (req, res) => {
 // Rekey
 router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
   const { alpha } = req.body;
-  if (!alpha) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
   try {
+    if (!alpha) {
+      return res.status(400).json({ message: "Missing parameters" });
+    }
     const user = res.user;
     const randomValue = await random32();
     const beta = ecPointExponentiation(alpha, randomValue);
@@ -244,10 +245,10 @@ router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
 // Initialize the user
 router.post("/init/:username", getUser, verifyToken, async (req, res) => {
   const { walletAddress } = req.body;
-  if (!walletAddress) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
   try {
+    if (!walletAddress) {
+      return res.status(400).json({ message: "Missing parameters" });
+    }
     const user = res.user;
     const verified = res.verify;
     // Check if the user has already been initialized
@@ -262,6 +263,7 @@ router.post("/init/:username", getUser, verifyToken, async (req, res) => {
     // Save the updated user record to mongoDB
     await user.save();
     // Save to redis for caching
+    // console.log(user)
     redisClient.set(user.username, JSON.stringify(user));
     sendNotification("Your MetaWallet successfully created", "MetaWallet Created", `Your MetaWallet has been created on ${currentDate()}. Your username is ${user.username} and walletAddress is ${user.walletAddress}. We are not responsible in case you forget or lose password and secret key.`, user.walletAddress);
     if (verified) {
@@ -275,10 +277,10 @@ router.post("/init/:username", getUser, verifyToken, async (req, res) => {
 // Login
 router.post("/login/:username", isCached, getUser, verifyToken, async (req, res) => {
   const { alpha } = req.body;
-  if (!alpha) {
-    return res.status(400).json({ message: "Missing parameters" });
-  }
   try{
+    if (!alpha) {
+      return res.status(400).json({ message: "Missing parameters" });
+    }
     const user = res.user;
     // Check if the user has a public key and public address
     if (!user.walletAddress) {
@@ -295,6 +297,7 @@ router.post("/login/:username", isCached, getUser, verifyToken, async (req, res)
 router.get("/:username", isCached, getUser, (req, res) => {
   try {
     const user = res.user;
+    console.log(user)
     res.json(user.walletAddress);
   } catch (err) {
     return res.status(500).json({ error: err.message });
