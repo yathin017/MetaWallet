@@ -14,7 +14,7 @@ const Settings = ({ show, onClose, setShow }) => {
             setShow(true)
         }
     }, [userData])
-    const { handleRekeying } = useAPI();
+    const { handleRekeying,handleDelete } = useAPI();
     const [showModal, setShowModal] = React.useState(false);
     const [otp, setOtp] = React.useState('');
     const [userdata, setuserdata] = React.useState({
@@ -190,7 +190,7 @@ const Settings = ({ show, onClose, setShow }) => {
                                         }
                                     />
                                 </div>
-                                <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 my-10" onClick={() => { handleRekeying(userData.email,userdata.password1,userData.alpha,userData.CrInv,userData.publicKey,userData.walletAddress,otp) }}>Confirm Rekeying</button>
+                                <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 my-10" onClick={() => { handleDelete(userData.email,otp) }}>Confirm Rekeying</button>
                             </div>
                         </div>
                     )

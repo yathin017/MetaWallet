@@ -279,7 +279,7 @@ const GetStarted = ({ onClose, setShow }) => {
                             onClick={() => {
                                 if (otp.length === 6) {
                                     console.log("OTP", )
-                                    handleIntialization(otp, userData.hashemail, userData.publicKey, userData.walletAddress);
+                                    handleIntialization(otp, userData.hashemail, userData.walletAddress);
                                     downloadTxtFile();
                                 }
                             }}

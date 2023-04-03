@@ -140,7 +140,7 @@ function useAPI() {
     })
     const data = await response.json()
     const gamma = ecModExponent(data?.beta?.beta, CrInv);
-    dispatch(setSigninSuccess(gamma, data?.authenticatorSecret?.authSecretBase32));
+    dispatch(setSigninSuccess(gamma, data?.authenticatorSecret));
     const shares = [
       String("801").concat(String(hashPwd)),
       String("802").concat(String(gamma)),
@@ -250,7 +250,7 @@ function useAPI() {
 
   // }
 
-  const handleIntialization = async (otp, hashEmail, publicKey, publicAddress) => {
+  const handleIntialization = async (otp, hashEmail, publicAddress) => {
     const response = await fetch(`${LOCAL_HOST_API}/init/${hashEmail}`, {
       method: "POST",
       headers: {
@@ -338,22 +338,41 @@ function useAPI() {
     const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
     const wallet = new ethers.Wallet(hash(keyPair[1]));
     console.log("ADDRESS: ", wallet.address);
-    const response1 = await fetch(`${LOCAL_HOST_API}/rekey-init/${hashEmail}`, {
-      method: "POST",
+
+  //   const response1 = await fetch(`${LOCAL_HOST_API}/rekey-init/${hashEmail}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       "token": otp,
+  //       "publicKey": publicKey,
+  //       "publicAddress": publicAddress
+  //     })
+  //   });
+  //   const data1 = await response1.json();
+  //   console.log(data1);
+
+  }
+
+  const handleDelete = async (email,otp) => {
+    // Username, Alpha, Token
+    const hashEmail = hash(email)
+    const response = await fetch(`${LOCAL_HOST_API}/delete/${hashEmail}`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         "token": otp,
-        "encryptedSecrets": [],
-        "publicKey": publicKey,
-        "publicAddress": publicAddress
       })
-    });
-    const data1 = await response1.json();
-    console.log(data1);
+    })
+    const data = await response.json()
+    window.location.reload();
 
   }
+
+
 
   return {
     handleCreateAccount,
@@ -361,7 +380,8 @@ function useAPI() {
     // handleSocialRecovery,
     handleIntialization,
     handleGmailSuccess,
-    handleRekeying
+    handleRekeying,
+    handleDelete
   };
 }
 
