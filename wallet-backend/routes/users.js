@@ -7,7 +7,7 @@ const router = express.Router();
 const speakeasy = require("speakeasy");
 const PushAPI = require("@pushprotocol/restapi");
 const ethers = require("ethers");
-const User = require("../models/user2");
+const User = require("../archive/user2");
 require("dotenv").config();
 
 // Import Redis client library
@@ -235,7 +235,7 @@ router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
     user.random = randomValue;
     user.walletAddress = null;
     await user.save();
-    res.json({ beta: { beta }, helperKeys: { helperKeys } });
+    res.json({ beta: { beta } });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
