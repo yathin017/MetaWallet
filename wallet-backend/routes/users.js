@@ -7,7 +7,7 @@ const router = express.Router();
 const speakeasy = require("speakeasy");
 const PushAPI = require("@pushprotocol/restapi");
 const ethers = require("ethers");
-const User = require("../archive/user2");
+const User = require("../models/user");
 require("dotenv").config();
 
 // Import Redis client library
