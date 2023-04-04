@@ -229,6 +229,7 @@ router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
     user.random = randomValue;
     user.walletAddress = null;
     await user.save();
+    redisClient.del(user.username);
     res.json({ beta: { beta } });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -302,6 +303,8 @@ router.delete("/delete/:username", getUser, verifyToken, async (req, res) => {
   try {
     const user = res.user;
     const deletedUser = await User.deleteOne({ username: user.username });
+    // Delete from redis
+    redisClient.del(user.username);
     if (deletedUser.deletedCount === 0) {
       return res.status(404).json({ message: "User not found" });
     }
