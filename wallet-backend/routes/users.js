@@ -290,8 +290,6 @@ router.get("/:username", isCached, getUser, (req, res) => {
   }
 });
 
-// Change Password
-
 // Delete user
 router.delete("/delete/:username", getUser, verifyToken, async (req, res) => {
   try {
@@ -303,6 +301,16 @@ router.delete("/delete/:username", getUser, verifyToken, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     return res.status(204).end(); // 204 No Content response indicates success
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Get Random 32 bytes
+router.get("/random", async (req, res) => {
+  try {
+    const randomValue = await random32();
+    res.json({ random: randomValue });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
