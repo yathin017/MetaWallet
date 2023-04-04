@@ -14,14 +14,8 @@ require("dotenv").config();
 const Redis = require("redis");
 
 const redisClient = Redis.createClient({
-  url: `redis://default:${process.env.REDIS_PASSWORD}@redis-16977.c1.asia-northeast1-1.gce.cloud.redislabs.com:16977`
+  url: `${process.env.REDIS_URL}`
 });
-
-// const redisClient = Redis.createClient({
-//   password: process.env.REDIS_PASSWORD,
-//   host: "redis-16977.c1.asia-northeast1-1.gce.cloud.redislabs.com",
-//   port: 16977,
-// });
 
 // Log any Redis connection errors
 redisClient.on("error", (error) => {
