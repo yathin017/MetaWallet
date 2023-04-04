@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "Meta Wallet",
-    "dateExported": "2023-04-03T14:11:37.661Z",
+    "dateExported": "2023-04-04T14:06:53.567Z",
     "version": "1.1",
     "folders": [],
     "requests": [
@@ -14,12 +14,12 @@
             "method": "POST",
             "sortNum": 10000,
             "created": "2023-03-25T17:22:15.916Z",
-            "modified": "2023-04-03T12:11:18.019Z",
+            "modified": "2023-04-04T03:16:09.924Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"username\": \"454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49d\",\n    \"alpha\": \"51068581037515477174429173284214955150958094441478790723360205432830859383751\"\n}",
+                "raw": "{\n    \"username\": \"454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49e\",\n    \"alpha\": \"51068581037515477174429173284214955150958094441478790723360205432830859383751\"\n}",
                 "form": []
             },
             "tests": []
@@ -29,16 +29,16 @@
             "colId": "0553a04d-5bb9-4406-812e-0cdf5f8fafc6",
             "containerId": "",
             "name": "/init",
-            "url": "http://localhost:3001/init/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49d",
+            "url": "http://localhost:3001/init/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49e",
             "method": "POST",
             "sortNum": 20000,
             "created": "2023-03-25T17:22:36.507Z",
-            "modified": "2023-04-03T14:11:13.346Z",
+            "modified": "2023-04-04T06:26:28.586Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"token\": \"667960\",\n  \"walletAddress\": \"Wallet Address\"\n}",
+                "raw": "{\n  \"token\": \"782348\",\n  \"walletAddress\": \"Wallet Address\"\n}",
                 "form": []
             },
             "tests": []
@@ -48,16 +48,16 @@
             "colId": "0553a04d-5bb9-4406-812e-0cdf5f8fafc6",
             "containerId": "",
             "name": "/login/:username",
-            "url": "http://localhost:3001/login/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49d",
+            "url": "http://localhost:3001/login/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49e",
             "method": "POST",
             "sortNum": 30000,
             "created": "2023-04-03T12:13:33.544Z",
-            "modified": "2023-04-03T14:05:43.229Z",
+            "modified": "2023-04-04T06:26:41.797Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"token\": \"110333\",\n    \"alpha\": \"51068581037515477174429173284214955150958094441478790723360205432830859383751\"\n}",
+                "raw": "{\n    \"token\": \"606477\",\n    \"alpha\": \"51068581037515477174429173284214955150958094441478790723360205432830859383751\"\n}",
                 "form": []
             },
             "tests": []
@@ -67,16 +67,16 @@
             "colId": "0553a04d-5bb9-4406-812e-0cdf5f8fafc6",
             "containerId": "",
             "name": "/rekey/:username",
-            "url": "http://localhost:3001/rekey/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49d",
+            "url": "http://localhost:3001/rekey/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49e",
             "method": "POST",
             "sortNum": 50000,
             "created": "2023-03-25T17:35:32.523Z",
-            "modified": "2023-04-03T14:05:57.882Z",
+            "modified": "2023-04-04T03:18:39.520Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"alpha\": \"51068581037515477174429173284214955150958094441478790723360205432830859383751\",\n  \"token\": \"110333\"\n}",
+                "raw": "{\n  \"alpha\": \"51068581037515477174429173284214955150958094441478790723360205432830859383751\",\n  \"token\": \"861114\"\n}",
                 "form": []
             },
             "tests": []
@@ -86,11 +86,11 @@
             "colId": "0553a04d-5bb9-4406-812e-0cdf5f8fafc6",
             "containerId": "",
             "name": "/:username",
-            "url": "http://localhost:3001/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49d",
+            "url": "http://localhost:3001/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49e",
             "method": "GET",
             "sortNum": 55000,
             "created": "2023-03-25T17:29:55.505Z",
-            "modified": "2023-04-03T14:06:56.375Z",
+            "modified": "2023-04-04T03:18:53.698Z",
             "headers": [],
             "params": [],
             "tests": []
@@ -100,18 +100,32 @@
             "colId": "0553a04d-5bb9-4406-812e-0cdf5f8fafc6",
             "containerId": "",
             "name": "/delete/:username",
-            "url": "http://localhost:3001/delete/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49d",
+            "url": "http://localhost:3001/delete/454eb3c446ba958ad7286dda54b35714cd33866c0a2fd7b1463b675a39d1b49e",
             "method": "DELETE",
             "sortNum": 60000,
             "created": "2023-03-25T17:39:57.336Z",
-            "modified": "2023-04-03T14:06:40.044Z",
+            "modified": "2023-04-04T06:27:36.595Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"token\": \"540647\"\n}",
+                "raw": "{\n  \"token\": \"790509\"\n}",
                 "form": []
             },
+            "tests": []
+        },
+        {
+            "_id": "1f673136-daf9-4b21-adb3-8451db19c0af",
+            "colId": "0553a04d-5bb9-4406-812e-0cdf5f8fafc6",
+            "containerId": "",
+            "name": "/random",
+            "url": "http://localhost:3001/random",
+            "method": "POST",
+            "sortNum": 70000,
+            "created": "2023-04-04T13:50:18.830Z",
+            "modified": "2023-04-04T13:55:00.893Z",
+            "headers": [],
+            "params": [],
             "tests": []
         }
     ]
