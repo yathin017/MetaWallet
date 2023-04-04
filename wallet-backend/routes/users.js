@@ -194,11 +194,12 @@ router.post("/create", async (req, res) => {
     }
     // If no existing record with the same username is found, create a new record
     const randomValue = await random32();
-    const beta = ecPointExponentiation(alpha, randomValue);
+    const random = randomValue.replace(/\s/g, "");
+    const beta = ecPointExponentiation(alpha, random);
     const authSecret = generateAuthenticatorSecret();
     const user = new User({
       username: username,
-      random: randomValue,
+      random: random,
       authenticatorSecret: authSecret.ascii
     });
     await user.save();
@@ -219,8 +220,9 @@ router.post("/rekey/:username", getUser, verifyToken, async (req, res) => {
     }
     const user = res.user;
     const randomValue = await random32();
-    const beta = ecPointExponentiation(alpha, randomValue);
-    user.random = randomValue;
+    const random = randomValue.replace(/\s/g, "");
+    const beta = ecPointExponentiation(alpha, random);
+    user.random = random;
     user.walletAddress = null;
     await user.save();
     redisClient.del(user.username);
@@ -307,10 +309,11 @@ router.delete("/delete/:username", getUser, verifyToken, async (req, res) => {
 });
 
 // Get Random 32 bytes
-router.get("/random", async (req, res) => {
+router.post("/random", async (req, res) => {
   try {
     const randomValue = await random32();
-    res.json({ random: randomValue });
+    const random = randomValue.replace(/\s/g, "");
+    res.json(random);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
