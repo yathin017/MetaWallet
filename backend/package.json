@@ -1,5 +1,5 @@
 {
-  "name": "metawallet",
+  "name": "backend",
   "version": "1.0.0",
   "description": "Securing Digital Asset Wallets with Post Quantum Cryptography and Zero Knowledge Proof: A Novel Approach",
   "main": "index.js",

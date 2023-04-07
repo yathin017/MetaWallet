@@ -1,3 +1,5 @@
+// Backend hosted on Cyclic: https://lazy-red-spider-wrap.cyclic.app/
+
 const mongoose = require("mongoose");
 const express = require("express");
 var cors = require('cors')
