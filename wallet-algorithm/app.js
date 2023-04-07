@@ -6,6 +6,7 @@ const ecparams = ecurve.getCurveByName("secp256k1"); //ecurve library constructo
 const secrets = require("secrets.js-grempe");
 const kyber = require("crystals-kyber");
 const ethers = require('ethers');
+const https = require('https');
 
 // Functions
 function hash(message) {
@@ -15,10 +16,6 @@ function hash(message) {
   );
   const hashBcrypt = bcrypt.hashSync(message, salt);
   return crypto.createHash("sha256").update(hashBcrypt).digest("hex");
-}
-
-function hexTOdec(hex) {
-  return String(parseInt(hex, 16).toString(10));
 }
 
 async function fetchRandomBytes() {
@@ -42,7 +39,7 @@ async function random32() {
   return response;
 }
 
-function ecModExponent(sp, exp) {
+function ecPointExponentiation(sp, exp) {
   const startPoint = BigInteger(String(sp));
   const exponent = BigInteger(String(exp));
   const ecPoint = ecparams.pointFromX(true, startPoint);
@@ -67,7 +64,11 @@ function hashToEllipticCurvePoint(hv) {
   return String(ecPoint.affineX);
 }
 
-function secretToUint8Array(secret) {
+function hexTOdec(hex) {
+  return String(parseInt(hex, 16).toString(10));
+}
+
+function hexToUint8Array(secret) {
   const secretUint8Array = new Uint8Array(Math.ceil(secret.length / 2));
   for (let i = 0; i < secret.length; i++) {
     secretUint8Array[i] = parseInt(secret.substr(i * 2, 2), 16);
@@ -80,7 +81,7 @@ function uint8ArrayToHex(uint8Array) {
   return hex;
 }
 
-// Make changes to the original function (dir: node_modules\crystals-kyber\kyber1024.js)
+// Make changes to the original function (dir: node_modules\crystals-kyber\kyber512.js)
 // https://www.diffchecker.com/eG5d9gLb/
 function kyberKeyGeneration(secretUint8Array) {
   const pk_sk = kyber.KeyGen512(secretUint8Array);
@@ -94,19 +95,22 @@ const pwd = "password";
 const hashUsername = hash(username);
 const hashpwd = hash(pwd);
 console.log("USERNAME: ",hashUsername);
+console.log("PASSWORD: ",hashpwd);
 
 const Cr = random32();
 const CrInv = ecInverse(Cr);
-const alpha = ecModExponent(hashToEllipticCurvePoint(hexTOdec(username)), Cr);
+const alpha = ecPointExponentiation(hashToEllipticCurvePoint(hexTOdec(username)), Cr);
 
+console.log("Cr: ",Cr);
+console.log("CrInv: ",CrInv);
 console.log("ALPHA: ",alpha);
 
 // Server side
 const Sr = "cb1161f9dbae25cc4dc3eb85a722c3a2cc8ead1ce9a6ab711b5a0ca6ae474127"; // await random32()
-const beta = ecModExponent(alpha, Sr);
+const beta = ecPointExponentiation(alpha, Sr);
 
 // Client side
-const gamma = ecModExponent(beta, CrInv);
+const gamma = ecPointExponentiation(beta, CrInv);
 
 // PQC Secret Sharing
 const shares = [
@@ -120,7 +124,7 @@ console.log("NEW SHARE: " + mainshare);
 const secret = secrets.combine(shares);
 console.log("SECRET: " + secret);
 
-const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
+const keyPair = kyberKeyGeneration(hexToUint8Array(secret));
 // console.log("PUBLIC KEY: " + keyPair[0]);
 // console.log("PRIVATE KEY: " + keyPair[1]);
 

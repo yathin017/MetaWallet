@@ -17,5 +17,5 @@ async function transact(privateKey, recipientAddress, value) {
     console.log(transaction.hash)
 }
 
-transact("0x072af548cc7238f080cd8181941567a928859a9b2235c070a27151cf6010a733", "0xE6707721ad79f4519f80D95ef4D961b60893CD76", 0.01);
+transact("", "0xE6707721ad79f4519f80D95ef4D961b60893CD76", 0.01);
 
