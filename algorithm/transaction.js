@@ -1,7 +1,7 @@
 const ethers = require('ethers');
 
 async function transact(privateKey, recipientAddress, value) {
-    const provider = new ethers.JsonRpcProvider("https://withered-fluent-sponge.ethereum-goerli.discover.quiknode.pro/aaf8094f3a84466654c62fc39be02128cc1dbddd/");
+    const provider = new ethers.JsonRpcProvider("http://34.131.144.87/");
     const feeData = await provider.getFeeData();
     const wallet = new ethers.Wallet(privateKey);
     const signer = wallet.connect(provider);
@@ -17,5 +17,5 @@ async function transact(privateKey, recipientAddress, value) {
     console.log(transaction.hash)
 }
 
-transact("", "0xE6707721ad79f4519f80D95ef4D961b60893CD76", 0.01);
+transact("2ec5248f12ecf493915442d97ed0430217f6d8d0f28626da4fc55792c6568633", "0xB245B4DBEe83064CDd975D31Af9edA5f6a4508A4", "20");
 

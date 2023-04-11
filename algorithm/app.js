@@ -55,8 +55,8 @@ function ecInverse(Cr) {
 
 function hashToEllipticCurvePoint(hv) {
   const hashValue = BigInteger(String(hv));
-  const bufferHashValue = Buffer.from(hash(String(hv)), "hex");
-  const ecPoint = ecparams.pointFromX(true, hashValue);
+  let bufferHashValue = Buffer.from(hash(String(hv)), "hex");
+  let ecPoint = ecparams.pointFromX(true, hashValue);
   while (ecparams.isOnCurve(ecPoint) == false) {
     bufferHashValue = Buffer.from(hash(Buffer.toString()), "hex");
     ecPoint = ecparams.pointFromX(true, BigInteger.fromBuffer(bufferHashValue));
@@ -99,7 +99,7 @@ console.log("PASSWORD: ",hashpwd);
 
 const Cr = random32();
 const CrInv = ecInverse(Cr);
-const alpha = ecPointExponentiation(hashToEllipticCurvePoint(hexTOdec(username)), Cr);
+const alpha = ecPointExponentiation(hashToEllipticCurvePoint(hexTOdec(hashUsername)), Cr);
 
 console.log("Cr: ",Cr);
 console.log("CrInv: ",CrInv);
