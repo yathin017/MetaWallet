@@ -17,5 +17,13 @@ async function transact(privateKey, recipientAddress, value) {
     console.log(transaction.hash)
 }
 
-transact("2ec5248f12ecf493915442d97ed0430217f6d8d0f28626da4fc55792c6568633", "0xB245B4DBEe83064CDd975D31Af9edA5f6a4508A4", "20");
+transact("", "0xB245B4DBEe83064CDd975D31Af9edA5f6a4508A4", "20");
 
+
+async function balance(walletAddress) {
+    const provider = new ethers.JsonRpcProvider("http://34.131.144.87/");
+    const balance = await provider.getBalance(walletAddress);
+    console.log(ethers.formatEther(balance, "ether"));
+}
+
+balance('0x0A801be61A959ce0635E152f808e235e52F3F605');

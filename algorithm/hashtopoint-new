@@ -1,8 +1,0 @@
-Function hashToEllipticCurvePoint(hv):
-    a <- -1
-    b <- 188
-    p <- 233970423115425145524320034830162017933
-    Gx <- 182
-    Gy <- 130
-    hashValue <- BigInteger(hv)
-    
