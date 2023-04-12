@@ -12,7 +12,7 @@ import secrets from "../Utils/secrets";
 import { ethers } from "ethers";
 // Import 'Kyber'
 import kyber, { KeyGen512 } from "../Utils/kyber";
-import { fetchUserBalance, intializeLogin, searchUser, setGoogleLoginSuccess, setHashEmail, setSignin, setSigninSuccess, setSocialRecoverySuccess, setTokenSuccess } from "../data/users/action";
+import { fetchUserBalance, intializeLogin, searchUser, setGoogleLoginSuccess, setHashEmail, setSignin, setSigninSuccess, setSocialRecoverySuccess, setTokenSuccess, transactionSuccess } from "../data/users/action";
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -41,8 +41,8 @@ function useAPI() {
   const dispatch = useDispatch();
   const [recoveryHelpers, setrecoveryHelpers] = useState([]);
   const [encryptedSecrets, setencryptedSecrets] = useState([]);
-  // const LOCAL_HOST_API = "http://localhost:3001";
-  const LOCAL_HOST_API = "https://lazy-red-spider-wrap.cyclic.app";
+  const LOCAL_HOST_API = "http://localhost:3001";
+  // const LOCAL_HOST_API = "https://lazy-red-spider-wrap.cyclic.app";
   // https://lazy-red-spider-wrap.cyclic.app
   const hash = (message) => {
     const rounds = 12;
@@ -148,20 +148,20 @@ function useAPI() {
       })
     })
     const data = await response.json();
-    console.log("/CREATE Data:-", data);
+    // console.log("/CREATE Data:-", data);
     const gamma = ecModExponent(data?.beta?.beta, CrInv);
-    console.log("BETA: " + data?.beta?.beta)
-    console.log("GAMMA: " + gamma)
+    // console.log("BETA: " + data?.beta?.beta)
+    // console.log("GAMMA: " + gamma)
     dispatch(setSigninSuccess(gamma, data?.authenticatorSecret));
     const shares = [
       String("801").concat(String(hashPwd)),
       String("802").concat(String(gamma)),
     ];
-    console.log("SHARES: " + shares)
+    // console.log("SHARES: " + shares)
     const share1 = secrets.newShare("3", shares);
-    console.log("NEW SHARE: " + share1)
+    // console.log("NEW SHARE: " + share1)
     const secret = secrets.combine(shares);
-    console.log("SECRET: " + secret);
+    // console.log("SECRET: " + secret);
     const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
     // PUBLIC KEY :- keyPair[0]
     const wallet = new ethers.Wallet(hash(keyPair[1]));
@@ -312,18 +312,18 @@ function useAPI() {
       })
     })
     const data = await response.json()
-    console.log(data)
+    // console.log(data)
     const gamma = ecModExponent(data?.beta?.beta, CrInv);
-    console.log("GAMMA: " + gamma)
+    // console.log("GAMMA: " + gamma)
     const shares = [
       String("801").concat(String(hashPwd1)),
       String("802").concat(String(gamma)),
     ];
     const secret = secrets.combine(shares);
-    console.log("SECRET: " + secret)
+    // console.log("SECRET: " + secret)
     const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
     const wallet = new ethers.Wallet(hash(keyPair[1]));
-    console.log("ADDRESS: ", wallet.address);
+    // console.log("ADDRESS: ", wallet.address);
     if (data?.message === 'Login successful') {
       dispatch(intializeLogin(hashEmail, alpha, CrInv, keyPair[0], wallet.address, hash(keyPair[1])));
       dispatch(setTokenSuccess())
@@ -348,7 +348,7 @@ function useAPI() {
       })
     })
     const data = await response.json()
-    console.log(data)
+    // console.log(data)
     const gamma = ecModExponent(data?.beta?.beta, CrInv);
     const shares = [
       String("801").concat(String(hashPwd1)),
@@ -357,7 +357,7 @@ function useAPI() {
     const secret = secrets.combine(shares);
     const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
     const wallet = new ethers.Wallet(hash(keyPair[1]));
-    console.log("ADDRESS: ", wallet.address);
+    // console.log("ADDRESS: ", wallet.address);
 
     //   const response1 = await fetch(`${LOCAL_HOST_API}/rekey-init/${hashEmail}`, {
     //     method: "POST",
@@ -403,7 +403,7 @@ function useAPI() {
       to: recipientAddress,
       value: ethers.parseEther(value, "ether"),
       gasPrice: feeData.gasPrice,
-      gasLimit: 500000,
+      gasLimit: 100000,
       nonce: await provider.getTransactionCount(wallet.address, 'latest')
     };
     const transaction = await signer.sendTransaction(tx);
@@ -425,10 +425,16 @@ function useAPI() {
       const data = await response.json()
       sender = data;
     }
-    console.log(sender)
-    
+
     const x = transact("0x" + privateKey, sender, amount);
-    console.log(x);
+    if(x){
+      console.log("success")
+      dispatch(transactionSuccess(x,true,true))
+    }
+    else{
+      console.log("fail")
+      dispatch(transactionSuccess(x,false,true))
+    }
   }
 
   const fetchBalance = async (walletAddress) => {
