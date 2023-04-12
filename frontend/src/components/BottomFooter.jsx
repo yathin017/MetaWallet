@@ -15,7 +15,7 @@ export const BottomFooter = () => {
                         <div>
                             <Footer.Title title="about" />
                             <Footer.LinkGroup col={true}>
-                                <Footer.Link href="#">
+                                <Footer.Link href="https://github.com/yathin017/MetaWallet#readme" target='_blank'>
                                     MetaWallet
                                 </Footer.Link>
                             </Footer.LinkGroup>
@@ -23,15 +23,15 @@ export const BottomFooter = () => {
                         <div>
                             <Footer.Title title="Follow us" />
                             <Footer.LinkGroup col={true}>
-                                <Footer.Link href="#">
+                                <Footer.Link href="https://github.com/yathin017/MetaWallet">
                                     Github
                                 </Footer.Link>
-                                <Footer.Link href="#">
+                                {/* <Footer.Link href="#">
                                     Discord
-                                </Footer.Link>
+                                </Footer.Link> */}
                             </Footer.LinkGroup>
                         </div>
-                        <div>
+                        {/* <div>
                             <Footer.Title title="Legal" />
                             <Footer.LinkGroup col={true}>
                                 <Footer.Link href="#">
@@ -41,15 +41,15 @@ export const BottomFooter = () => {
                                     Terms & Conditions
                                 </Footer.Link>
                             </Footer.LinkGroup>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <Footer.Divider />
                 <div className="w-full sm:flex sm:items-center sm:justify-between">
                     <Footer.Copyright
-                        href="#"
+                        href="/"
                         by="MetaWallet™"
-                        year={2022}
+                        year={2023}
                     />
                     <div className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">
                         <Footer.Icon
@@ -65,7 +65,7 @@ export const BottomFooter = () => {
                             icon={BsTwitter}
                         />
                         <Footer.Icon
-                            href="#"
+                            href="https://github.com/yathin017/MetaWallet"
                             icon={BsGithub}
                         />
                     </div>

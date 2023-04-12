@@ -12,7 +12,7 @@ import secrets from "../Utils/secrets";
 import { ethers } from "ethers";
 // Import 'Kyber'
 import kyber, { KeyGen512 } from "../Utils/kyber";
-import { intializeLogin, setGoogleLoginSuccess, setHashEmail, setSignin, setSigninSuccess, setSocialRecoverySuccess, setTokenSuccess } from "../data/users/action";
+import { fetchUserBalance, intializeLogin, searchUser, setGoogleLoginSuccess, setHashEmail, setSignin, setSigninSuccess, setSocialRecoverySuccess, setTokenSuccess } from "../data/users/action";
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -41,7 +41,9 @@ function useAPI() {
   const dispatch = useDispatch();
   const [recoveryHelpers, setrecoveryHelpers] = useState([]);
   const [encryptedSecrets, setencryptedSecrets] = useState([]);
-  const LOCAL_HOST_API = "http://localhost:3001";
+  // const LOCAL_HOST_API = "http://localhost:3001";
+  const LOCAL_HOST_API = "https://lazy-red-spider-wrap.cyclic.app";
+  // https://lazy-red-spider-wrap.cyclic.app
   const hash = (message) => {
     const rounds = 12;
     const salt = `$2b$${rounds}$`.concat(sha512(message));
@@ -66,14 +68,15 @@ function useAPI() {
 
   function hashToEllipticCurvePoint(hv) {
     const hashValue = BigInteger(String(hv));
-    const bufferHashValue = Buffer.from(hash(String(hv)), "hex");
-    const ecPoint = ecparams.pointFromX(true, hashValue);
+    let bufferHashValue = Buffer.from(hash(String(hv)), "hex");
+    let ecPoint = ecparams.pointFromX(true, hashValue);
     while (ecparams.isOnCurve(ecPoint) == false) {
       bufferHashValue = Buffer.from(hash(Buffer.toString()), "hex");
       ecPoint = ecparams.pointFromX(true, BigInteger.fromBuffer(bufferHashValue));
     }
     return String(ecPoint.affineX);
   }
+
 
   function hexTOdec(hex) {
     return String(parseInt(hex, 16).toString(10));
@@ -118,11 +121,17 @@ function useAPI() {
   const handleCreateAccount = async (email, password) => {
     dispatch(setSignin());
     const hashEmail = hash(email)
-    const Cr = nanoid(64);
-    let Cr_1 = ((Cr.replace(/[^a-zA-Z0-9]/g, '')).toLowerCase()).slice(0, 32);
-    const CrInv = ecInverse(Cr_1);
+    const response_random = await fetch(`${LOCAL_HOST_API}/random`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    const data_random = await response_random.json()
+    const Cr = data_random;
+    const CrInv = ecInverse(Cr);
     const alpha = ecModExponent(
-      hashToEllipticCurvePoint(hexTOdec(email)),
+      hashToEllipticCurvePoint(hexTOdec(hashEmail)),
       Cr
     );
     const hashPwd = hash(password);
@@ -138,23 +147,26 @@ function useAPI() {
         // recoveryHelpers: recoveryHelpers
       })
     })
-    const data = await response.json()
+    const data = await response.json();
+    console.log("/CREATE Data:-", data);
     const gamma = ecModExponent(data?.beta?.beta, CrInv);
+    console.log("BETA: " + data?.beta?.beta)
+    console.log("GAMMA: " + gamma)
     dispatch(setSigninSuccess(gamma, data?.authenticatorSecret));
     const shares = [
       String("801").concat(String(hashPwd)),
       String("802").concat(String(gamma)),
     ];
+    console.log("SHARES: " + shares)
     const share1 = secrets.newShare("3", shares);
+    console.log("NEW SHARE: " + share1)
     const secret = secrets.combine(shares);
-    // console.log("SECRET: " + secret);
+    console.log("SECRET: " + secret);
     const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
-
     // PUBLIC KEY :- keyPair[0]
-
     const wallet = new ethers.Wallet(hash(keyPair[1]));
 
-    dispatch(setSocialRecoverySuccess(keyPair[0], wallet.address, hash(keyPair[1]),share1))
+    dispatch(setSocialRecoverySuccess(keyPair[0], wallet.address, hash(keyPair[1]), share1))
   }
 
   // const handleSocialRecovery = async (hashEmail, alpha, CrInv, hashpassword, emailData) => {
@@ -274,11 +286,17 @@ function useAPI() {
     // Username, Alpha, Token
     // dispatch(setSignin());
     const hashEmail = hash(email);
-    const Cr = nanoid(64);
-    let Cr_1 = ((Cr.replace(/[^a-zA-Z0-9]/g, '')).toLowerCase()).slice(0, 32);
-    const CrInv = ecInverse(Cr_1);
+    const response_random = await fetch(`${LOCAL_HOST_API}/random`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    const data_random = await response_random.json()
+    const Cr = data_random;
+    const CrInv = ecInverse(Cr);
     const alpha = ecModExponent(
-      hashToEllipticCurvePoint(hexTOdec(email.concat(password))),
+      hashToEllipticCurvePoint(hexTOdec(hashEmail)),
       Cr
     );
     const hashPwd1 = hash(password);
@@ -296,11 +314,13 @@ function useAPI() {
     const data = await response.json()
     console.log(data)
     const gamma = ecModExponent(data?.beta?.beta, CrInv);
+    console.log("GAMMA: " + gamma)
     const shares = [
       String("801").concat(String(hashPwd1)),
       String("802").concat(String(gamma)),
     ];
     const secret = secrets.combine(shares);
+    console.log("SECRET: " + secret)
     const keyPair = kyberKeyGeneration(secretToUint8Array(secret));
     const wallet = new ethers.Wallet(hash(keyPair[1]));
     console.log("ADDRESS: ", wallet.address);
@@ -339,23 +359,23 @@ function useAPI() {
     const wallet = new ethers.Wallet(hash(keyPair[1]));
     console.log("ADDRESS: ", wallet.address);
 
-  //   const response1 = await fetch(`${LOCAL_HOST_API}/rekey-init/${hashEmail}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       "token": otp,
-  //       "publicKey": publicKey,
-  //       "publicAddress": publicAddress
-  //     })
-  //   });
-  //   const data1 = await response1.json();
-  //   console.log(data1);
+    //   const response1 = await fetch(`${LOCAL_HOST_API}/rekey-init/${hashEmail}`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       "token": otp,
+    //       "publicKey": publicKey,
+    //       "publicAddress": publicAddress
+    //     })
+    //   });
+    //   const data1 = await response1.json();
+    //   console.log(data1);
 
   }
 
-  const handleDelete = async (email,otp) => {
+  const handleDelete = async (email, otp) => {
     // Username, Alpha, Token
     const hashEmail = hash(email)
     const response = await fetch(`${LOCAL_HOST_API}/delete/${hashEmail}`, {
@@ -373,6 +393,70 @@ function useAPI() {
   }
 
 
+  async function transact(privateKey, recipientAddress, value) {
+    const provider = new ethers.JsonRpcProvider("https://withered-fluent-sponge.ethereum-goerli.discover.quiknode.pro/aaf8094f3a84466654c62fc39be02128cc1dbddd/");
+    const feeData = await provider.getFeeData();
+    const wallet = new ethers.Wallet(privateKey);
+    const signer = wallet.connect(provider);
+    const tx = {
+      from: wallet.address,
+      to: recipientAddress,
+      value: ethers.parseEther(value, "ether"),
+      gasPrice: feeData.gasPrice,
+      gasLimit: 500000,
+      nonce: await provider.getTransactionCount(wallet.address, 'latest')
+    };
+    const transaction = await signer.sendTransaction(tx);
+    console.log(transaction.hash)
+    return transaction.hash;
+  }
+
+  const handleTrade = async (privateKey, senderAddress, amount) => {
+    // If senderAddress has @ sign, it is an email address
+    let sender = senderAddress
+    if (senderAddress.includes("@")) {
+      const hashEmail = hash(senderAddress);
+      const response = await fetch(`${LOCAL_HOST_API}/${hashEmail}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      const data = await response.json()
+      sender = data;
+    }
+    console.log(sender)
+    
+    const x = transact("0x" + privateKey, sender, amount);
+    console.log(x);
+  }
+
+  const fetchBalance = async (walletAddress) => {
+    const provider = new ethers.JsonRpcProvider("https://withered-fluent-sponge.ethereum-goerli.discover.quiknode.pro/aaf8094f3a84466654c62fc39be02128cc1dbddd/");
+    const balance = await provider.getBalance(walletAddress);
+    const etherString = ethers.formatEther(balance);
+    dispatch(fetchUserBalance(etherString));
+    // return etherString;
+  }
+
+  const fetchUser = async (email) => {
+    const hashEmail = hash(email);
+    const response = await fetch(`${LOCAL_HOST_API}/${hashEmail}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    const data = await response.json()
+    console.log(data)
+    if (data?.message === "Cannot find user") {
+      dispatch(searchUser(null, false, true))
+    }
+    else {
+      dispatch(searchUser(data, true, true))
+    }
+  }
+
 
   return {
     handleCreateAccount,
@@ -381,7 +465,10 @@ function useAPI() {
     handleIntialization,
     handleGmailSuccess,
     handleRekeying,
-    handleDelete
+    handleDelete,
+    handleTrade,
+    fetchBalance,
+    fetchUser
   };
 }
 

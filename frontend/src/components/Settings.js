@@ -63,7 +63,7 @@ const Settings = ({ show, onClose, setShow }) => {
                 <h1 class="text-2xl font-bold text-gray-300 px-6 md:px-0">Account Settings</h1>
                 <ul class="flex border-b border-gray-300 text-sm font-medium text-gray-200 mt-3 px-6 md:px-0">
                     <li class={`mr-8 ${activeTab === 'profile' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('profile') }}>Profile Info</li>
-                    <li class={`mr-8 ${activeTab === 'social' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('social') }}>Social Recovery</li>
+                    {/* <li class={`mr-8 ${activeTab === 'social' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('social') }}>Social Recovery</li> */}
                     <li class={`mr-8 ${activeTab === 'rekey' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('rekey') }}>Rekeying</li>
                     <li class={`mr-8 ${activeTab === 'rekey' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('delete') }}>Delete Account</li>
                 </ul>

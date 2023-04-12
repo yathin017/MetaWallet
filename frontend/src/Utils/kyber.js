@@ -37,9 +37,9 @@ const paramsETA2 = 2;
 // CRYSTALS-KYBER JAVASCRIPT
 
 // 1. KeyGen
-const KeyGen512 = function() {
+const KeyGen512 = function(secretUint8Array) {
     // IND-CPA keypair
-    let indcpakeys = indcpaKeyGen();
+    let indcpakeys = indcpaKeyGen(secretUint8Array);
 
     let pk = indcpakeys[0];
     let sk = indcpakeys[1];
@@ -180,12 +180,12 @@ const Decrypt512 = function(c, privateKey) {
 /*****************************************************************************************************************************/
 // indcpaKeyGen generates public and private keys for the CPA-secure
 // public-key encryption scheme underlying Kyber.
-function indcpaKeyGen() {
+function indcpaKeyGen(secretUint8Array) {
 
     // random bytes for seed
     let rnd = new Uint8Array(32);
     // webcrypto.getRandomValues(rnd); // web api cryptographically strong random values
-
+    rnd = secretUint8Array;
     // hash rnd with SHA3-512
     const buffer1 = Buffer.from(rnd);
     const hash1 = new SHA3(512);

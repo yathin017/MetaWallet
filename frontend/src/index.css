@@ -3,26 +3,34 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
 
-*{
+* {
   font-family: 'Noto Sans', sans-serif;
 }
+
 .main-body {
   background: rgb(25, 33, 52);
   background: linear-gradient(180deg, rgba(25, 33, 52, 1) 0%, rgba(12, 15, 29, 1) 50%, rgba(7, 8, 21, 1) 100%);
   color: #fff;
 }
 
+.holder {
+  background-color: #1f2639 !important;
+  color: white !important;
+  border-width: 0px !important;
+  /* height: 96px !important; */
+  margin-bottom: 5px;
+  border-radius: 12px !important;
+}
+
 .ant-input {
   background-color: #1f2639 !important;
   color: white !important;
   border-width: 0px !important;
-  height: 96px !important;
+  /* height: 96px !important; */
   margin-bottom: 5px;
-  font-size: 35px;
   border-radius: 12px !important;
   width: 95%;
   padding: 6px 11px;
-  text-align: end;
 }
 
 .swapButton {

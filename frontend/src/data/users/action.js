@@ -1,5 +1,5 @@
 import {
-  SIGN_IN, SIGN_IN_SUCCESS, TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN,GOOGLE_LOGIN_SUCCESS
+  SIGN_IN, SIGN_IN_SUCCESS, TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN,GOOGLE_LOGIN_SUCCESS, FETCH_BALANCE, SEARCH_USER, REMOVE_ALERT
 } from "./types";
 
 export function setGoogleLoginSuccess(email,picture) {
@@ -62,5 +62,31 @@ export function intializeLogin(hashemail, alpha, CrInv, publicKey, publicAddress
       publicAddress: publicAddress,
       privateKey: privateKey
     },
+  };
+}
+
+export function fetchUserBalance(balance) {
+  return {
+    type: FETCH_BALANCE,
+    payload: {
+      balance: balance,
+    },
+  };
+}
+
+export function searchUser(email,userFound,showAlert) {
+  return {
+    type: SEARCH_USER,
+    payload: {
+      email: email,
+      userFound:userFound,
+      showAlert:showAlert
+    },
+  };
+}
+
+export function removeAlert() {
+  return {
+    type: REMOVE_ALERT,
   };
 }
