@@ -62,10 +62,10 @@ const Settings = ({ show, onClose, setShow }) => {
             <div class="container mx-2 md:mx-10 max-w-sm md:max-w-3xl my-8">
                 <h1 class="text-2xl font-bold text-gray-300 px-6 md:px-0">Account Settings</h1>
                 <ul class="flex border-b border-gray-300 text-sm font-medium text-gray-200 mt-3 px-6 md:px-0">
-                    <li class={`mr-8 ${activeTab === 'profile' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('profile') }}>Profile Info</li>
+                    <li class={`mr-8 ${activeTab === 'profile' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('profile');setOtp('') }}>Profile Info</li>
                     {/* <li class={`mr-8 ${activeTab === 'social' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('social') }}>Social Recovery</li> */}
-                    <li class={`mr-8 ${activeTab === 'rekey' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('rekey') }}>Rekeying</li>
-                    <li class={`mr-8 ${activeTab === 'rekey' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('delete') }}>Delete Account</li>
+                    <li class={`mr-8 ${activeTab === 'rekey' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('rekey');setOtp('') }}>Rekeying</li>
+                    <li class={`mr-8 ${activeTab === 'rekey' ? 'text-gray-400' : ''} hover:text-gray-400 border-b-2 border-gray-800 py-4 cursor-pointer`} onClick={() => { setActiveTab('delete');setOtp('') }}>Delete Account</li>
                 </ul>
                 {
                     activeTab === 'profile' && (
@@ -98,7 +98,7 @@ const Settings = ({ show, onClose, setShow }) => {
                         <div class="w-full rounded-lg mx-auto mt-8 flex overflow-hidden rounded-b-none">
                             <div class="w-2/3 bg-opacity-70 p-8 hidden md:inline-block">
                                 <h2 class="font-medium text-2xl text-gray-400 mb-4 tracking-wide">Rekeying</h2>
-                                <p class="text-sm text-gray-200">Something about RekeyingWay nor furnished sir procuring therefore but. Warmth far manner myself active are cannot called. Set her half end girl rich met. Me allowance departure an curiosity ye. In no talking address excited it conduct. Husbands debating replying overcame blessing he it me to domestic.</p>
+                                <p class="text-sm text-gray-200"></p>
                                 <div className="my-3">
                                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-gray-200">
                                         Password
@@ -149,7 +149,7 @@ const Settings = ({ show, onClose, setShow }) => {
                         <div class="w-full rounded-lg mx-auto mt-8 flex overflow-hidden rounded-b-none">
                             <div class="w-2/3 bg-opacity-70 p-8 hidden md:inline-block">
                                 <h2 class="font-medium text-2xl text-gray-400 mb-4 tracking-wide">Delete Account</h2>
-                                <p class="text-sm text-gray-200">Something about RekeyingWay nor furnished sir procuring therefore but. Warmth far manner myself active are cannot called. Set her half end girl rich met. Me allowance departure an curiosity ye. In no talking address excited it conduct. Husbands debating replying overcame blessing he it me to domestic.</p>
+                                <p class="text-sm text-gray-200"></p>
                                 <div className="my-3">
                                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-gray-200">
                                         Password
@@ -190,7 +190,7 @@ const Settings = ({ show, onClose, setShow }) => {
                                         }
                                     />
                                 </div>
-                                <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 my-10" onClick={() => { handleDelete(userData.email,otp) }}>Confirm Rekeying</button>
+                                <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 my-10" onClick={() => { handleDelete(userData.email,otp) }}>Delete Account</button>
                             </div>
                         </div>
                     )

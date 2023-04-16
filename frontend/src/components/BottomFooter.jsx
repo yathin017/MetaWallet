@@ -31,17 +31,21 @@ export const BottomFooter = () => {
                                 </Footer.Link> */}
                             </Footer.LinkGroup>
                         </div>
-                        {/* <div>
+                        <div>
                             <Footer.Title title="Legal" />
                             <Footer.LinkGroup col={true}>
-                                <Footer.Link href="#">
-                                    Privacy Policy
+                                <Footer.Link>
+                                    <a href='https://docs.google.com/document/u/1/d/e/2PACX-1vS_sxEK2EHnh3Tspgk0-WnsIcgKOb_3H3eGYb7OLSvYw7Ag3ZMLkybZX6JarVG9Jsg0Qy2rBsM-KtXU/pub' target='_blank'>
+                                        Privacy Policy
+                                    </a>
                                 </Footer.Link>
                                 <Footer.Link href="#">
-                                    Terms & Conditions
+                                    <a href='https://docs.google.com/document/d/e/2PACX-1vSz0r1COjkQ87VZ42WG-tqFQDRreeMofUNTHsK0Gsx9eBf44PQTJ3hFEd0aKA_-5UsqiLuZ-7GuaE6D/pub' target='_blank'>
+                                        Terms & Conditions
+                                    </a>
                                 </Footer.Link>
                             </Footer.LinkGroup>
-                        </div> */}
+                        </div>
                     </div>
                 </div>
                 <Footer.Divider />

@@ -1,6 +1,6 @@
 import {
   SIGN_IN, SIGN_IN_SUCCESS,
-  TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN, GOOGLE_LOGIN_SUCCESS, FETCH_BALANCE, SEARCH_USER, REMOVE_ALERT
+  TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN, GOOGLE_LOGIN_SUCCESS, FETCH_BALANCE, SEARCH_USER, REMOVE_ALERT, TRANSACTION_SUCCESS
 } from "./types";
 
 const initialState = {
@@ -31,6 +31,11 @@ const initialState = {
     userFound: false,
     showAlert: false
   },
+  transactionData: {
+    txnHash: null,
+    txnStatus: null,
+    txnAlert: false
+  }
 
 
 
@@ -53,7 +58,6 @@ const useReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        qrLoading: 2,
       }
     case HASH_EMAIL:
       return {
@@ -132,8 +136,23 @@ const useReducer = (state = initialState, action) => {
           email: null,
           userFound: false,
           showAlert: false
+        },
+        transactionData: {
+          txnHash: null,
+          txnStatus: null,
+          txnAlert: false
         }
       }
+    case TRANSACTION_SUCCESS:
+      return {
+        ...state,
+        transactionData: {
+          txnHash: action.payload.txnHash,
+          txnStatus: action.payload.txnStatus,
+        }
+
+      }
+
 
 
     default:

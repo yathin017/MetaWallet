@@ -1,5 +1,5 @@
 import {
-  SIGN_IN, SIGN_IN_SUCCESS, TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN,GOOGLE_LOGIN_SUCCESS, FETCH_BALANCE, SEARCH_USER, REMOVE_ALERT
+  SIGN_IN, SIGN_IN_SUCCESS, TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN,GOOGLE_LOGIN_SUCCESS, FETCH_BALANCE, SEARCH_USER, REMOVE_ALERT, TRANSACTION_SUCCESS
 } from "./types";
 
 export function setGoogleLoginSuccess(email,picture) {
@@ -88,5 +88,16 @@ export function searchUser(email,userFound,showAlert) {
 export function removeAlert() {
   return {
     type: REMOVE_ALERT,
+  };
+}
+
+export function transactionSuccess(txnHash,txnStatus) {
+  return {
+    type: TRANSACTION_SUCCESS,
+    payload: {
+      txnHash: txnHash,
+      txnStatus:txnStatus,
+      txnAlert:true
+    },
   };
 }

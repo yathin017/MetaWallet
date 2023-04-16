@@ -1,11 +1,9 @@
-// Backend hosted on Cyclic: https://lazy-red-spider-wrap.cyclic.app/
-
 const mongoose = require("mongoose");
 const express = require("express");
 var cors = require('cors')
 const app = express();
 require("dotenv").config();
-const PORT = process.env.PORT || 3001
+const PORT = 3001
 
 app.use(cors())
 mongoose.connect(process.env.MONGODB_URL, {
@@ -23,3 +21,5 @@ const users = require("./routes/users");
 app.use("/", users);
 
 app.listen(PORT, () => console.log("Server Started"));
+
+// Backend hosted on Cyclic: https://lazy-red-spider-wrap.cyclic.app/
