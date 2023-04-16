@@ -44,7 +44,6 @@ function useAPI() {
   // const LOCAL_HOST_API = "http://localhost:3001";
   // const LOCAL_HOST_API = "https://lazy-red-spider-wrap.cyclic.app";
   const LOCAL_HOST_API = "http://34.131.62.15";
-  // https://lazy-red-spider-wrap.cyclic.app
   const hash = (message) => {
     const rounds = 12;
     const salt = `$2b$${rounds}$`.concat(sha512(message));
