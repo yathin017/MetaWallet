@@ -2,10 +2,10 @@
 
 ### Fortifying Digital Asset Wallet Security with Post-Quantum Cryptography and Zero-Knowledge Proof
 
-Google Doc: shorturl.at/dtFM5
-Website: https://metawallett.netlify.app/
-Server: http://34.131.62.15/
-Blockchain: http://34.131.144.87/
+* Google Doc: https://docs.google.com/document/d/e/2PACX-1vToVt9nG5YBEtFAfH5-sehdPtp_07GkCRKLs-t66jnvP8AVeKJ2aFxP5HmHYuttQMNGe6iVzjwmpq48/pub
+* Website: https://metawallett.netlify.app/
+* Server: http://34.131.62.15/
+* Blockchain: http://34.131.144.87/
 
 Cryptographic techniques used in digital asset wallets may not be safe from potential attacks by quantum computers, leading to financial losses and reduced user trust. A more secure and robust approach is needed to address these vulnerabilities and ensure the safety of digital asset wallets. Our research aims to propose a new algorithm that uses post-quantum cryptography and zero-knowledge proof to enhance wallet security while also being user-friendly.
 
