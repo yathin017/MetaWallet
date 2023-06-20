@@ -31,6 +31,9 @@ To mitigate the risk of public brute force attacks on password-derived multi-sig
 ```bash
 git clone https://github.com/yathin017/MetaWallet.git
 ```
+```bash
+cd MetaWallet
+```
 
 ### Run Backend
 - Navigate to backend directory
@@ -39,7 +42,7 @@ cd backend
 ```
 - Install required packages
 ```bash
-npm i
+npm install
 ```
 - Run the backend in normal or developer mode
 ```bash
@@ -57,7 +60,7 @@ cd frontend
 ```
 - Install required packages
 ```bash
-npm i
+npm install
 ```
 - Run the frontend
 ```bash
@@ -75,7 +78,7 @@ cd algorithm
 ```
 - Install required packages
 ```bash
-npm i
+npm install
 ```
 - Go through the code in `app.js` before running and make the changes for kyber512
 - Run the algorithm
