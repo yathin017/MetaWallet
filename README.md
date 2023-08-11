@@ -69,7 +69,7 @@ npm start
 
 ### Want to understand our Algorithm?
 
-<img src="https://user-images.githubusercontent.com/75620849/230621844-0bcc63b4-fb65-4f16-87dc-dafd9c0b3144.png" width="725" />
+<!-- img src="https://user-images.githubusercontent.com/75620849/230621844-0bcc63b4-fb65-4f16-87dc-dafd9c0b3144.png" width="725" /-->
 
 #### Run the Algorithm?
 - Navigate to algorithm directory
