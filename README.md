@@ -1,6 +1,7 @@
 <img src="https://user-images.githubusercontent.com/75620849/230622162-c804d78e-91a5-47c0-a51e-e83cdeb9f2d7.png" width="512" />
 
 https://metawallett.netlify.app/
+DEMO: https://bit.ly/metawallet-demo
 
 ## Background
 This research introduces an innovative solution to enhance the security and usability of digital asset wallets in the face of quantum computing threats. By combining post-quantum cryptography and zero-knowledge proofs, the proposed algorithm strengthens wallet security. It employs Lattice-based Threshold Secret Sharing, the Kyber Algorithm for key generation, and ZKP for unlocking wallets. Notably, this approach eliminates the need for complex seed-phrases, making it more user-friendly. The algorithm also offers features like server downtime wallet recovery and private key rekeying, further improving security and convenience. This comprehensive framework effectively safeguards digital assets, addressing the challenges posed by quantum computing.
