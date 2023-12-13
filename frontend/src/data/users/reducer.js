@@ -1,6 +1,15 @@
 import {
-  SIGN_IN, SIGN_IN_SUCCESS,
-  TOKEN_SUCCESS, SOCIAL_RECOVERY_SUCCESS, HASH_EMAIL, INTIALIZE_LOGIN, GOOGLE_LOGIN_SUCCESS, FETCH_BALANCE, SEARCH_USER, REMOVE_ALERT, TRANSACTION_SUCCESS
+  SIGN_IN,
+  SIGN_IN_SUCCESS,
+  TOKEN_SUCCESS,
+  SOCIAL_RECOVERY_SUCCESS,
+  HASH_EMAIL,
+  INTIALIZE_LOGIN,
+  GOOGLE_LOGIN_SUCCESS,
+  FETCH_BALANCE,
+  SEARCH_USER,
+  REMOVE_ALERT,
+  TRANSACTION_SUCCESS,
 } from "./types";
 
 const initialState = {
@@ -16,7 +25,7 @@ const initialState = {
     email: null,
     picture: null,
     secretShare: null,
-    balance: null
+    balance: null,
   },
   loading: false,
   isUserLoggedin: false,
@@ -29,16 +38,13 @@ const initialState = {
   searchedUser: {
     email: null,
     userFound: false,
-    showAlert: false
+    showAlert: false,
   },
   transactionData: {
     txnHash: null,
     txnStatus: null,
-    txnAlert: false
-  }
-
-
-
+  },
+  txnAlert: false,
 };
 
 const useReducer = (state = initialState, action) => {
@@ -58,7 +64,7 @@ const useReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-      }
+      };
     case HASH_EMAIL:
       return {
         ...state,
@@ -87,9 +93,8 @@ const useReducer = (state = initialState, action) => {
           publicKey: action.payload.publicKey,
           walletAddress: action.payload.publicAddress,
           privateKey: action.payload.privateKey,
-          secretShare: action.payload.secretShare
+          secretShare: action.payload.secretShare,
         },
-
       };
     case TOKEN_SUCCESS:
       return {
@@ -109,7 +114,7 @@ const useReducer = (state = initialState, action) => {
           hashpassword: action.payload.hashpassword,
           publicKey: action.payload.publicKey,
           walletAddress: action.payload.publicAddress,
-          privateKey: action.payload.privateKey
+          privateKey: action.payload.privateKey,
         },
       };
     case FETCH_BALANCE:
@@ -126,34 +131,32 @@ const useReducer = (state = initialState, action) => {
         searchedUser: {
           email: action.payload.email,
           userFound: action.payload.userFound,
-          showAlert: action.payload.showAlert
-        }
-      }
+          showAlert: action.payload.showAlert,
+        },
+      };
     case REMOVE_ALERT:
       return {
         ...state,
         searchedUser: {
           email: null,
           userFound: false,
-          showAlert: false
+          showAlert: false,
         },
         transactionData: {
           txnHash: null,
           txnStatus: null,
-          txnAlert: false
-        }
-      }
+        },
+        txnAlert: false,
+      };
     case TRANSACTION_SUCCESS:
       return {
         ...state,
         transactionData: {
           txnHash: action.payload.txnHash,
           txnStatus: action.payload.txnStatus,
-        }
-
-      }
-
-
+        },
+        txnAlert: true,
+      };
 
     default:
       return state;

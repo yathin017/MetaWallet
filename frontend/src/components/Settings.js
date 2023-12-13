@@ -21,7 +21,6 @@ const Settings = ({ show, onClose, setShow }) => {
         password1: '',
         password2: '',
     })
-    console.log(userData)
     return (
         <>
             {/* {showModal && (<div id="popup-modal" tabindex="-1" class="fixed top-0 left-0 z-50 p-4 overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">

@@ -78,10 +78,10 @@ export const Nav = ({ show, onClose, setShow }) => {
                                                 <div id="dropdown" class="text-white z-10 divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700 absolute top-[11%] right-[1%]">
                                                     <ul class="py-2 text-sm text-gray-200" aria-labelledby="dropdownDefaultButton">
                                                         <li>
-                                                            <div onClick={() => { navigate('/dashboard') }} class="block px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer">Dashboard</div>
+                                                            <div onClick={() => { navigate('/dashboard');setshowSettingsPanel(false); }} class="block px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer">Dashboard</div>
                                                         </li>
                                                         <li>
-                                                            <div onClick={() => { navigate('/settings') }} class="block px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer">Settings</div>
+                                                            <div onClick={() => { navigate('/settings');setshowSettingsPanel(false); }} class="block px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer">Settings</div>
                                                         </li>
                                                         {/* <li>
                                                             <a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">Earnings</a>

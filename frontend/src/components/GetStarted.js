@@ -196,11 +196,11 @@ const GetStarted = ({ onClose, setShow }) => {
                                     Login
                                 </button>
                             </div>
-                            <div className="mb-3">
+                            {/* <div className="mb-3">
                                 <a href="#" className="block text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
                                     Forgot your password?
                                 </a>
-                            </div>
+                            </div> */}
                         </div>
                         }
                     </>
@@ -360,12 +360,12 @@ const GetStarted = ({ onClose, setShow }) => {
                                         Sign up
                                     </button>
                                 </div>
-                                <div className="mb-3">
+                                {/* <div className="mb-3">
 
                                     <a href="#" className="block text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
                                         Forgot your password?
                                     </a>
-                                </div>
+                                </div> */}
                             </div>
                         </>}
                     {

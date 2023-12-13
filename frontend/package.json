@@ -71,7 +71,8 @@
   },
   "react-dotenv": {
     "whitelist": [
-      "GOOGLE_LOGIN_CREDENTIAL"
+      "GOOGLE_LOGIN_CREDENTIAL",
+      "BACKEND_URL"
     ]
   }
 }

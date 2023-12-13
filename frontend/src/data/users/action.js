@@ -97,7 +97,6 @@ export function transactionSuccess(txnHash,txnStatus) {
     payload: {
       txnHash: txnHash,
       txnStatus:txnStatus,
-      txnAlert:true
     },
   };
 }
