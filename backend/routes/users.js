@@ -308,6 +308,26 @@ router.delete("/delete/:username", getUser, verifyToken, async (req, res) => {
   }
 });
 
+// Add Wallet Address to user
+router.post("/walletAddress/:username", getUser, async (req, res) => {
+  console.log('API End point hit',req.body);
+  const { walletAddress } = req.body;
+  try {
+    if (!walletAddress) {
+      return res.status(400).json({ message: "Missing parameters" });
+    }
+    const user = res.user;
+    user.walletAddress = walletAddress;
+    await user.save();
+    // Save to redis for caching
+    redisClient.set(user.username, JSON.stringify(user));
+    return res.status(200).json({ message: "Wallet Address added" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+
 // Get Random 32 bytes
 router.post("/random", async (req, res) => {
   try {
